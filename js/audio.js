@@ -135,28 +135,8 @@ var Audio = (function() {
   function init() {
     console.log('Audio.init() called');
     
-    // Setup enable sound button (always, not just mobile)
-    var soundBtn = document.getElementById('btn-enable-sound');
-    if (soundBtn) {
-      console.log('Found sound button');
-      soundBtn.addEventListener('click', function() {
-        console.log('Sound button clicked');
-        forceUnlockAudio();
-        this.textContent = '🔊 Sound Enabled!';
-        this.style.background = '#4CAF50';
-      });
-      
-      // Also handle touch
-      soundBtn.addEventListener('touchend', function(e) {
-        e.preventDefault();
-        console.log('Sound button touched');
-        forceUnlockAudio();
-        this.textContent = '🔊 Sound Enabled!';
-        this.style.background = '#4CAF50';
-      });
-    } else {
-      console.log('Sound button not found!');
-    }
+    // Create a silent HTML5 audio element to override iOS silent mode
+    createSilentAudioElement();
     
     // Add listeners to ALL touch events to maximize chances of unlocking
     var unlockEvents = ['click', 'touchstart', 'touchend', 'mousedown', 'keydown'];
@@ -173,6 +153,40 @@ var Audio = (function() {
     });
     
     console.log('Audio module initialized, waiting for user interaction...');
+  }
+  
+  /**
+   * Create a silent audio element to bypass iOS silent mode
+   * This tricks iOS into thinking media is playing, overriding the mute switch
+   */
+  function createSilentAudioElement() {
+    // Create an audio element with a data URI of silence
+    // This is a tiny valid MP3 file of silence
+    var silenceDataURL = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoRBqpAAAAAAD/+1DEAAAGRAFttBEAI4gg7bKYQBAAANIAAABBBBHv/EHgfB8HygIAmD4f/lAQBAE2D4f/6gIAgCAJh///UCDv//1AgEATB8HwfD4IBN//1AgCAJgmD4f/Uf////xAEwTB8Hw+CAJv//qBAIAmD4Pg+D4Pg7///8QBN//1A+D4Pg+D4Pg+H/6gQCAJg+H/1H/////+IAgCAJg+D7///1AgEATD//1A+H/////+IAm//6gfB8Hw//1AgCAJg//1H/////+oEAQBMEwfB8HwfB8H///+oEH//UfB8PqP/6j///+oHwfB8Hw+o//1H////qB8Hwf/1H/6j//qP/+oHwfD/+o//1H//6gfB8P/6gfD//1H/+o//9QPg+H1H/9R/6j//qBAEATB8HwfB8HwfD//1AgCAJgmD4Pg+D4Pg+D//1AgCAJg+H1H6j/1H/qP/+oEAgCYJg+D4fUf/1H6j/+oEAQBMHw+o/9R/6j/1H/9QPg+HwfB8HwfB8Pw//9QIA+D4fUfqP/Uf+o/9R//qB8Hw/6j/+o/9R/6j//qBAEwfD6j/1H/qP/Uf+o//qBD//1H/9R/6j/1H6j//9QIAgD4fUf+o/9R+o/9R//9QPg+H/9R/6j/1H/qP/Uf/1A+D7/1H/qP/Uf+o/9R//UD4Pg+/9R/6j/1H6j/1H//UCAIA+H1H/qP/UfqP/Uf/1A+D4f/1H/qP/Uf+o/9R//UD4Pg//9R/6j/1H/qP/Uf/6gfB8P/6j/1H/qP/Uf+o//qBAHw//9R/6j/1H/qP/Uf/6gQB8P/9R/6j/1H6j/1H/+oHw+H/9R/6j/1H/qP/Uf/1A+H/+o/9R/6j/1H/qP//UCAf/6j/1H/qP/Uf+o//qB8Hw//qP/Uf+o/9R/6j/+oHwfD/+o/9R/6j/1H/qP/6gQD//6j/1H/qP/Uf+o//qB8Hw+/9R/6j/1H6j/1H//UCAT/9R/6j/1H/qP/Uf/1A+H//qP/Uf+o/9R/6j//UCAP/9R/6j/1H/qP/Uf/6gfB9/6j/1H/qP/Uf+o//qBAP/9R/6j/1H6j/1H/+oHw//9R/6j/1H/qP/Uf/1AgD//1H/qP/Uf+o/9R//UCAP/6j/1H/qP/Uf+o//qB8P/+o/9R/6j/1H/qP/6gQB//6j/1H6j/1H/qP/6gfD/+o/9R/6j/1H/qP/9QIA//9R/6j/1H/qP/Uf/1AgH/+o/9R/6j/1H6j//UCAP/9R/6j/1H/qP/Uf/1AgD//1H/qP/Uf+o/9R//UD4f/6j/1H/qP/Uf+o//qB8H/+o/9R+o/9R/6j/+oEA//9R/6j/1H/qP/Uf/1AgH/+o/9R/6j/1H/qP/6gQD/+o/9R/6j/1H6j//qBAP/9R/6j/1H/qP/Uf/1AgH/+o/9R/6j/1H/qP/6gfB//qP/Uf+o/9R/6j//UCAX/+o+H/qP/Uf+o//qB8H3/qP/Uf+o/9R/6j/+oEAf/6j/1H/qP/Uf+o//qBAH/+o/9R/6j/1H/qP/6gQB//qP/Uf+o/9R/6j//qBAP/6j/1H/qP/Uf+o//qBAH/9R/6j/1H/qP/Uf/1AgD/+o/9R/6j/1H/qP/6gQB//qP/Uf+o/9R/6j//qBAL/+o/9R/6j/1H/qP/6gQB//UP/Uf+o/9R/6j/+oEAf/1H/qP/Uf+o/9R//qBAH/9R/6j/1H/qP/Uf/6gQB//Uf+o/9R/6j/1H/+oEAf/1H/qP/Uf+o/9R//qBAH/9R/6j/1H/qP/Uf/6gQC//UP/Uf+o/9R/6j/+oEAv/1H/qP/Uf+o/9R//qBAH/9R/6j/1H/qP/Uf/6gQB//Uf+o/9R/6j/1H/+oEA';
+    
+    var audioElement = document.createElement('audio');
+    audioElement.id = 'silent-audio';
+    audioElement.loop = true;
+    audioElement.src = silenceDataURL;
+    audioElement.volume = 0.01; // Nearly silent but not zero
+    
+    // Important: playsinline prevents iOS from opening fullscreen player
+    audioElement.setAttribute('playsinline', '');
+    audioElement.setAttribute('webkit-playsinline', '');
+    
+    document.body.appendChild(audioElement);
+    
+    // Try to play on any user interaction
+    var playAudio = function() {
+      audioElement.play().then(function() {
+        console.log('Silent audio playing - silent mode bypassed');
+      }).catch(function(e) {
+        console.log('Silent audio play failed:', e);
+      });
+    };
+    
+    document.addEventListener('touchstart', playAudio, { once: true });
+    document.addEventListener('click', playAudio, { once: true });
   }
   
   /**

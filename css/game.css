@@ -218,7 +218,7 @@
   position: absolute;
   left: 0;
   right: 0;
-  height: 3px;
+  height: 4px;
   display: flex;
   justify-content: center;
   gap: 4px;
@@ -227,29 +227,39 @@
 .buffer-line--top {
   background: linear-gradient(90deg, 
     transparent 0%, 
-    rgba(247, 201, 72, 0.6) 20%, 
-    rgba(247, 201, 72, 0.6) 80%, 
+    rgba(0, 255, 136, 0.9) 10%, 
+    rgba(0, 255, 136, 0.9) 90%, 
     transparent 100%);
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
 }
 
 .buffer-line--bottom {
   background: linear-gradient(90deg, 
     transparent 0%, 
-    rgba(247, 201, 72, 0.6) 20%, 
-    rgba(247, 201, 72, 0.6) 80%, 
+    rgba(255, 107, 53, 0.9) 10%, 
+    rgba(255, 107, 53, 0.9) 90%, 
     transparent 100%);
+  box-shadow: 0 0 10px rgba(255, 107, 53, 0.5);
 }
 
 .buffer-line__label {
   position: absolute;
-  right: -60px;
+  right: 5px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: var(--font-size-xs);
-  color: var(--accent-secondary);
+  font-size: 10px;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
-  opacity: 0.7;
+  text-shadow: 0 0 5px rgba(0,0,0,0.8);
+}
+
+.buffer-line--top .buffer-line__label {
+  color: #00ff88;
+}
+
+.buffer-line--bottom .buffer-line__label {
+  color: #ff6b35;
 }
 
 .hit-zone-glow {

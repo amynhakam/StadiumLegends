@@ -188,9 +188,43 @@
     height: 25px;
   }
 
-  /* Hit Zone - Hidden on mobile (use touch controls) */
+  /* Hit Zone - Still show buffer lines on mobile */
   .hit-zone {
     display: none;
+  }
+  
+  /* Make buffer lines very visible on mobile */
+  .hit-zone-buffer {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  .buffer-line {
+    height: 6px !important;
+  }
+  
+  .buffer-line--top {
+    background: linear-gradient(90deg, 
+      rgba(0, 255, 136, 0.95) 0%, 
+      rgba(0, 255, 136, 0.95) 100%) !important;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.7) !important;
+  }
+  
+  .buffer-line--bottom {
+    background: linear-gradient(90deg, 
+      rgba(255, 107, 53, 0.95) 0%, 
+      rgba(255, 107, 53, 0.95) 100%) !important;
+    box-shadow: 0 0 15px rgba(255, 107, 53, 0.7) !important;
+  }
+  
+  .buffer-line__label {
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    right: 10px !important;
+  }
+  
+  .hit-zone-glow {
+    opacity: 0.8;
   }
 
   /* Touch Controls - Show on mobile */

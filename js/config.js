@@ -19,8 +19,8 @@ var Config = (function() {
     SCORE_MISS: -500000,
     
     // Timing Windows (milliseconds)
-    TIMING_PERFECT: 50,
-    TIMING_GOOD: 100,
+    TIMING_PERFECT: 80,
+    TIMING_GOOD: 150,
     
     // Upgrade Timing Bonuses
     TIMING_BONUS_PRO: 0.2,      // +20%
