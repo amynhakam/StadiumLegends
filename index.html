@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Stadium Legends - Rhythm Game</title>
+  <meta name="description" content="A musician-themed rhythm game. Choose your character, hit the notes, and become a Stadium Legend!">
+  
+  <!-- Prevent zoom on double tap for mobile -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/menu.css">
+  <link rel="stylesheet" href="css/game.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <!-- ============================================
+       TITLE SCREEN
+       ============================================ -->
+  <div id="title-screen" class="screen active">
+    <div class="screen__content title-content">
+      <div class="title-logo">
+        <span class="title-logo__icon">🎸</span>
+        <h1 class="title-logo__text">Stadium Legends</h1>
+        <p class="title-logo__tagline">Become a music icon</p>
+      </div>
+      
+      <div class="title-balance">
+        <span class="balance-label">Your Balance</span>
+        <span class="balance-amount" id="title-balance">$1,000,000</span>
+      </div>
+      
+      <div class="title-actions">
+        <button id="btn-play" class="btn btn--primary btn--large">
+          <span>🎤</span> Play
+        </button>
+        <button id="btn-shop" class="btn btn--secondary">
+          <span>🛒</span> Upgrade Shop
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       CHARACTER SELECT SCREEN
+       ============================================ -->
+  <div id="character-select" class="screen">
+    <header class="screen__header">
+      <button class="btn btn--back" data-screen="title-screen">
+        <span>←</span> Back
+      </button>
+      <h2 class="screen__title">Choose Your Artist</h2>
+      <div class="header-balance">
+        <span id="char-balance">$1,000,000</span>
+      </div>
+    </header>
+    
+    <div class="screen__content">
+      <div id="character-grid" class="character-grid">
+        <!-- Character cards inserted by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       STADIUM SELECT SCREEN
+       ============================================ -->
+  <div id="stadium-select" class="screen">
+    <header class="screen__header">
+      <button class="btn btn--back" data-screen="character-select">
+        <span>←</span> Back
+      </button>
+      <h2 class="screen__title">Choose Your Venue</h2>
+      <div class="header-balance">
+        <span id="stadium-balance">$1,000,000</span>
+      </div>
+    </header>
+    
+    <div class="screen__content">
+      <div class="selected-character-preview" id="selected-character-preview">
+        <!-- Selected character preview -->
+      </div>
+      
+      <div id="stadium-list" class="stadium-list">
+        <!-- Stadium cards inserted by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       SONG SELECT SCREEN
+       ============================================ -->
+  <div id="song-select" class="screen">
+    <header class="screen__header">
+      <button class="btn btn--back" data-screen="stadium-select">
+        <span>←</span> Back
+      </button>
+      <h2 class="screen__title">Choose Your Song</h2>
+      <div class="header-balance">
+        <span id="song-balance">$1,000,000</span>
+      </div>
+    </header>
+    
+    <div class="screen__content">
+      <div class="venue-preview" id="venue-preview">
+        <!-- Selected venue preview -->
+      </div>
+      
+      <div id="song-list" class="song-list">
+        <!-- Song cards inserted by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       GAMEPLAY SCREEN
+       ============================================ -->
+  <div id="gameplay-screen" class="screen">
+    <div class="game-hud">
+      <div class="hud-left">
+        <div class="hud-score">
+          <span class="hud-label">Score</span>
+          <span class="hud-value" id="hud-score">0</span>
+        </div>
+        <div class="hud-combo">
+          <span class="hud-label">Combo</span>
+          <span class="hud-value" id="hud-combo">0</span>
+        </div>
+      </div>
+      
+      <div class="hud-center">
+        <div class="hud-money" id="hud-money">
+          <span class="money-change" id="money-change"></span>
+          <span class="money-total" id="money-total">$1,000,000</span>
+        </div>
+      </div>
+      
+      <div class="hud-right">
+        <div class="hud-accuracy">
+          <span class="hud-label">Accuracy</span>
+          <span class="hud-value" id="hud-accuracy">100%</span>
+        </div>
+        <button id="btn-pause" class="btn btn--icon">⏸️</button>
+      </div>
+    </div>
+    
+    <div class="game-area">
+      <div class="note-highway" id="note-highway">
+        <div class="lane" data-lane="0"></div>
+        <div class="lane" data-lane="1"></div>
+        <div class="lane" data-lane="2"></div>
+        <div class="lane" data-lane="3"></div>
+      </div>
+      
+      <!-- Hit Zone Buffer Lines -->
+      <div class="hit-zone-container">
+        <div class="hit-zone-buffer" id="hit-zone-buffer">
+          <div class="buffer-line buffer-line--top" id="buffer-top">
+            <span class="buffer-line__label">EARLY</span>
+          </div>
+          <div class="hit-zone-glow" id="hit-zone-glow"></div>
+          <div class="buffer-line buffer-line--bottom" id="buffer-bottom">
+            <span class="buffer-line__label">LATE</span>
+          </div>
+        </div>
+        
+        <div class="hit-zone" id="hit-zone">
+          <div class="hit-target" data-lane="0"><span>1</span></div>
+          <div class="hit-target" data-lane="1"><span>2</span></div>
+          <div class="hit-target" data-lane="2"><span>3</span></div>
+          <div class="hit-target" data-lane="3"><span>4</span></div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Mobile touch controls -->
+    <div class="touch-controls" id="touch-controls">
+      <button class="touch-btn" data-lane="0">1</button>
+      <button class="touch-btn" data-lane="1">2</button>
+      <button class="touch-btn" data-lane="2">3</button>
+      <button class="touch-btn" data-lane="3">4</button>
+    </div>
+    
+    <div class="game-progress">
+      <div class="progress-bar" id="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       PAUSE OVERLAY
+       ============================================ -->
+  <div id="pause-overlay" class="overlay hidden">
+    <div class="overlay__content">
+      <h2>Paused</h2>
+      <div class="pause-actions">
+        <button id="btn-resume" class="btn btn--primary">
+          <span>▶️</span> Resume
+        </button>
+        <button id="btn-restart" class="btn btn--secondary">
+          <span>🔄</span> Restart
+        </button>
+        <button id="btn-quit" class="btn btn--danger">
+          <span>🚪</span> Quit
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       RESULTS SCREEN
+       ============================================ -->
+  <div id="results-screen" class="screen">
+    <div class="screen__content results-content">
+      <h2 class="results-title" id="results-title">Performance Complete!</h2>
+      
+      <div class="results-grade" id="results-grade">
+        <span class="grade-letter">A</span>
+        <span class="grade-label">Amazing!</span>
+      </div>
+      
+      <div class="results-stats">
+        <div class="stat-row">
+          <span class="stat-label">Perfect</span>
+          <span class="stat-value" id="stat-perfect">0</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Good</span>
+          <span class="stat-value" id="stat-good">0</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Miss</span>
+          <span class="stat-value" id="stat-miss">0</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Max Combo</span>
+          <span class="stat-value" id="stat-combo">0</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Accuracy</span>
+          <span class="stat-value" id="stat-accuracy">0%</span>
+        </div>
+      </div>
+      
+      <div class="results-earnings">
+        <span class="earnings-label">Earnings</span>
+        <span class="earnings-amount" id="results-earnings">+$0</span>
+      </div>
+      
+      <div class="results-balance">
+        <span class="balance-label">New Balance</span>
+        <span class="balance-amount" id="results-balance">$1,000,000</span>
+      </div>
+      
+      <div class="results-unlock" id="results-unlock" hidden>
+        <span class="unlock-icon">🔓</span>
+        <span class="unlock-text" id="unlock-text">New venue unlocked!</span>
+      </div>
+      
+      <div class="results-actions">
+        <button id="btn-retry" class="btn btn--secondary">
+          <span>🔄</span> Play Again
+        </button>
+        <button id="btn-continue" class="btn btn--primary">
+          <span>✓</span> Continue
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       UPGRADE SHOP SCREEN
+       ============================================ -->
+  <div id="upgrade-shop" class="screen">
+    <header class="screen__header">
+      <button class="btn btn--back" data-screen="title-screen">
+        <span>←</span> Back
+      </button>
+      <h2 class="screen__title">Upgrade Shop</h2>
+      <div class="header-balance">
+        <span id="shop-balance">$1,000,000</span>
+      </div>
+    </header>
+    
+    <div class="screen__content">
+      <p class="shop-intro">Upgrade your instruments for better performance!</p>
+      
+      <div id="upgrade-list" class="upgrade-list">
+        <!-- Upgrade cards inserted by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       LOADING OVERLAY
+       ============================================ -->
+  <div id="loading-overlay" class="overlay">
+    <div class="overlay__content loading-content">
+      <div class="loading-spinner"></div>
+      <p class="loading-text">Loading...</p>
+    </div>
+  </div>
+
+  <!-- ============================================
+       TOAST NOTIFICATIONS
+       ============================================ -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- App Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/characters.js"></script>
+  <script src="js/stadiums.js"></script>
+  <script src="js/songs.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

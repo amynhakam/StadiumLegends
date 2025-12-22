@@ -1,0 +1,335 @@
+/* ============================================
+   Stadium Legends - Responsive Styles
+   ============================================ */
+
+/* ============================================
+   Tablet (max-width: 768px)
+   ============================================ */
+@media (max-width: 768px) {
+  :root {
+    --font-size-3xl: 2.5rem;
+    --font-size-2xl: 1.75rem;
+  }
+
+  .screen__header {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .screen__title {
+    font-size: var(--font-size-md);
+  }
+
+  .screen__content {
+    padding: var(--spacing-md);
+  }
+
+  /* Title Screen */
+  .title-logo__icon {
+    font-size: 4rem;
+  }
+
+  .title-logo__text {
+    font-size: var(--font-size-2xl);
+  }
+
+  /* Character Grid */
+  .character-grid {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--spacing-md);
+  }
+
+  .character-card {
+    padding: var(--spacing-md);
+  }
+
+  .character-card__icon {
+    font-size: 3rem;
+  }
+
+  /* Stadium List */
+  .stadium-card {
+    padding: var(--spacing-md);
+  }
+
+  .stadium-card__icon {
+    font-size: 2rem;
+    width: 50px;
+  }
+
+  /* Game HUD */
+  .game-hud {
+    padding: var(--spacing-sm);
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+  }
+
+  .hud-left,
+  .hud-right {
+    gap: var(--spacing-md);
+  }
+
+  .hud-value {
+    font-size: var(--font-size-lg);
+  }
+
+  .money-total {
+    font-size: var(--font-size-lg);
+  }
+
+  /* Hit Targets */
+  .hit-target {
+    height: 50px;
+    font-size: var(--font-size-lg);
+  }
+
+  /* Results */
+  .results-grade .grade-letter {
+    font-size: 4rem;
+  }
+}
+
+/* ============================================
+   Mobile (max-width: 480px)
+   ============================================ */
+@media (max-width: 480px) {
+  :root {
+    --font-size-3xl: 2rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-xl: 1.25rem;
+  }
+
+  .screen__content {
+    padding: var(--spacing-sm);
+  }
+
+  /* Title Screen */
+  .title-logo__icon {
+    font-size: 3rem;
+  }
+
+  .title-logo__text {
+    font-size: var(--font-size-xl);
+  }
+
+  .title-logo__tagline {
+    font-size: var(--font-size-md);
+  }
+
+  .title-balance {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .title-balance .balance-amount {
+    font-size: var(--font-size-xl);
+  }
+
+  /* Character Grid - Single Column */
+  .character-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .character-card__icon {
+    font-size: 2.5rem;
+  }
+
+  .character-card__name {
+    font-size: var(--font-size-lg);
+  }
+
+  /* Stadium Cards */
+  .stadium-card {
+    flex-wrap: wrap;
+  }
+
+  .stadium-card__icon {
+    font-size: 1.5rem;
+    width: 40px;
+  }
+
+  .stadium-card__name {
+    font-size: var(--font-size-md);
+  }
+
+  /* Game HUD - Simplified */
+  .game-hud {
+    justify-content: space-around;
+  }
+
+  .hud-left,
+  .hud-right {
+    gap: var(--spacing-sm);
+  }
+
+  .hud-combo,
+  .hud-accuracy {
+    display: none;
+  }
+
+  .hud-value {
+    font-size: var(--font-size-md);
+  }
+
+  #btn-pause {
+    width: 36px;
+    height: 36px;
+    font-size: var(--font-size-sm);
+  }
+
+  /* Note Highway */
+  .note-highway {
+    padding: 0 var(--spacing-sm);
+  }
+
+  .lane {
+    max-width: 80px;
+  }
+
+  .note {
+    height: 25px;
+  }
+
+  /* Hit Zone - Hidden on mobile (use touch controls) */
+  .hit-zone {
+    display: none;
+  }
+
+  /* Touch Controls - Show on mobile */
+  .touch-controls {
+    display: flex;
+    padding: var(--spacing-sm);
+  }
+
+  .touch-btn {
+    max-width: 80px;
+    height: 70px;
+    font-size: var(--font-size-xl);
+  }
+
+  /* Results */
+  .results-grade .grade-letter {
+    font-size: 3rem;
+  }
+
+  .results-stats {
+    padding: var(--spacing-md);
+  }
+
+  .stat-row {
+    font-size: var(--font-size-sm);
+  }
+
+  .results-earnings .earnings-amount {
+    font-size: var(--font-size-xl);
+  }
+
+  .results-actions {
+    flex-direction: column;
+  }
+
+  /* Overlay */
+  .overlay__content {
+    padding: var(--spacing-lg);
+    width: 95%;
+  }
+
+  /* Shop */
+  .upgrade-card {
+    padding: var(--spacing-md);
+  }
+
+  .upgrade-card__icon {
+    font-size: 2rem;
+  }
+
+  .upgrade-card__tiers {
+    flex-wrap: wrap;
+  }
+}
+
+/* ============================================
+   Landscape Mobile
+   ============================================ */
+@media (max-height: 500px) and (orientation: landscape) {
+  .game-hud {
+    padding: var(--spacing-xs) var(--spacing-md);
+  }
+
+  .hud-label {
+    display: none;
+  }
+
+  .touch-controls {
+    padding: var(--spacing-xs);
+  }
+
+  .touch-btn {
+    height: 60px;
+  }
+
+  .game-progress {
+    padding: var(--spacing-xs) var(--spacing-md);
+  }
+
+  .progress-bar {
+    height: 4px;
+  }
+}
+
+/* ============================================
+   Touch Device Detection
+   ============================================ */
+@media (hover: none) and (pointer: coarse) {
+  /* Show touch controls, hide keyboard hints */
+  .hit-target span {
+    display: none;
+  }
+
+  .touch-controls {
+    display: flex;
+  }
+
+  /* Larger tap targets */
+  .btn {
+    min-height: 48px;
+    min-width: 48px;
+  }
+
+  .character-card,
+  .stadium-card,
+  .song-card {
+    min-height: 60px;
+  }
+}
+
+/* ============================================
+   Reduced Motion
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================
+   High Contrast Mode
+   ============================================ */
+@media (prefers-contrast: high) {
+  :root {
+    --bg-primary: #000000;
+    --bg-secondary: #111111;
+    --bg-tertiary: #222222;
+    --bg-card: #333333;
+    --text-primary: #ffffff;
+    --text-secondary: #dddddd;
+  }
+
+  .note,
+  .hit-target,
+  .touch-btn {
+    border-width: 4px;
+  }
+}

@@ -1,0 +1,577 @@
+/* ============================================
+   Stadium Legends - Menu Styles
+   ============================================ */
+
+/* ============================================
+   Title Screen
+   ============================================ */
+.title-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  text-align: center;
+  padding: var(--spacing-xl);
+}
+
+.title-logo {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.title-logo__icon {
+  font-size: 5rem;
+  display: block;
+  margin-bottom: var(--spacing-md);
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.title-logo__text {
+  font-size: var(--font-size-3xl);
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 30px rgba(255, 107, 53, 0.3);
+}
+
+.title-logo__tagline {
+  font-size: var(--font-size-lg);
+  color: var(--text-secondary);
+  margin-top: var(--spacing-sm);
+}
+
+.title-balance {
+  background-color: var(--bg-secondary);
+  padding: var(--spacing-md) var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--spacing-2xl);
+}
+
+.title-balance .balance-label {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  margin-bottom: var(--spacing-xs);
+}
+
+.title-balance .balance-amount {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--accent-secondary);
+}
+
+.title-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  width: 100%;
+  max-width: 300px;
+}
+
+.title-actions .btn {
+  width: 100%;
+}
+
+/* ============================================
+   Character Select
+   ============================================ */
+.character-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-lg);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.character-card {
+  background-color: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.character-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--character-color, var(--accent-primary));
+}
+
+.character-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--character-color, var(--accent-primary));
+}
+
+.character-card__icon {
+  font-size: 4rem;
+  text-align: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.character-card__name {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: var(--spacing-xs);
+}
+
+.character-card__instrument {
+  font-size: var(--font-size-md);
+  color: var(--accent-primary);
+  text-align: center;
+  margin-bottom: var(--spacing-sm);
+}
+
+.character-card__style {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.character-card__upgrade {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-md);
+}
+
+.upgrade-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--text-muted);
+}
+
+.upgrade-dot.filled {
+  background-color: var(--accent-secondary);
+  border-color: var(--accent-secondary);
+}
+
+/* ============================================
+   Stadium Select
+   ============================================ */
+.selected-character-preview {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  background-color: var(--bg-secondary);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.selected-character-preview .preview-icon {
+  font-size: 2.5rem;
+}
+
+.selected-character-preview .preview-info {
+  flex: 1;
+}
+
+.selected-character-preview .preview-name {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+}
+
+.selected-character-preview .preview-instrument {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.stadium-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.stadium-card {
+  background-color: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: 2px solid transparent;
+}
+
+.stadium-card:hover:not(.locked) {
+  border-color: var(--accent-primary);
+  transform: translateX(4px);
+}
+
+.stadium-card.locked {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.stadium-card__icon {
+  font-size: 2.5rem;
+  width: 60px;
+  text-align: center;
+}
+
+.stadium-card__info {
+  flex: 1;
+}
+
+.stadium-card__name {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  margin-bottom: var(--spacing-xs);
+}
+
+.stadium-card__details {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.stadium-card__multiplier {
+  font-size: var(--font-size-sm);
+  color: var(--accent-secondary);
+  font-weight: 600;
+}
+
+.stadium-card__action {
+  text-align: right;
+}
+
+.stadium-card__cost {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--accent-primary);
+}
+
+.stadium-card__lock {
+  font-size: 1.5rem;
+}
+
+/* ============================================
+   Song Select
+   ============================================ */
+.venue-preview {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  background-color: var(--bg-secondary);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.venue-preview .preview-icon {
+  font-size: 2rem;
+}
+
+.venue-preview .preview-name {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+}
+
+.song-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.song-card {
+  background-color: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: 2px solid transparent;
+}
+
+.song-card:hover {
+  border-color: var(--accent-primary);
+  transform: translateX(4px);
+}
+
+.song-card__title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  margin-bottom: var(--spacing-xs);
+}
+
+.song-card__info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.song-card__difficulty {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+}
+
+.song-card__difficulty.difficulty--easy {
+  background-color: rgba(34, 197, 94, 0.2);
+  color: var(--accent-success);
+}
+
+.song-card__difficulty.difficulty--medium {
+  background-color: rgba(245, 158, 11, 0.2);
+  color: var(--accent-secondary);
+}
+
+.song-card__difficulty.difficulty--hard {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: var(--accent-danger);
+}
+
+.song-card__best {
+  color: var(--accent-secondary);
+}
+
+/* ============================================
+   Results Screen
+   ============================================ */
+.results-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  text-align: center;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.results-title {
+  font-size: var(--font-size-2xl);
+  margin-bottom: var(--spacing-lg);
+}
+
+.results-grade {
+  margin-bottom: var(--spacing-xl);
+}
+
+.results-grade .grade-letter {
+  display: block;
+  font-size: 5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.results-grade .grade-label {
+  font-size: var(--font-size-lg);
+  color: var(--text-secondary);
+}
+
+.results-stats {
+  width: 100%;
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--spacing-sm) 0;
+  border-bottom: 1px solid var(--bg-tertiary);
+}
+
+.stat-row:last-child {
+  border-bottom: none;
+}
+
+.stat-label {
+  color: var(--text-secondary);
+}
+
+.stat-value {
+  font-weight: 600;
+}
+
+.results-earnings {
+  margin-bottom: var(--spacing-md);
+}
+
+.results-earnings .earnings-label {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+}
+
+.results-earnings .earnings-amount {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+}
+
+.results-earnings .earnings-amount.positive {
+  color: var(--accent-success);
+}
+
+.results-earnings .earnings-amount.negative {
+  color: var(--accent-danger);
+}
+
+.results-balance {
+  margin-bottom: var(--spacing-lg);
+}
+
+.results-balance .balance-label {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+}
+
+.results-balance .balance-amount {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--accent-secondary);
+}
+
+.results-unlock {
+  background-color: var(--accent-success);
+  color: var(--text-primary);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.results-actions {
+  display: flex;
+  gap: var(--spacing-md);
+  width: 100%;
+}
+
+.results-actions .btn {
+  flex: 1;
+}
+
+/* ============================================
+   Upgrade Shop
+   ============================================ */
+.shop-intro {
+  text-align: center;
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-xl);
+}
+
+.upgrade-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.upgrade-card {
+  background-color: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  border-left: 4px solid var(--character-color, var(--accent-primary));
+}
+
+.upgrade-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.upgrade-card__icon {
+  font-size: 2.5rem;
+}
+
+.upgrade-card__name {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+}
+
+.upgrade-card__current {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.upgrade-card__tiers {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.tier-badge {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  background-color: var(--bg-tertiary);
+  color: var(--text-muted);
+}
+
+.tier-badge.active {
+  background-color: var(--accent-secondary);
+  color: var(--bg-primary);
+}
+
+.tier-badge.available {
+  background-color: var(--accent-primary);
+  color: var(--text-primary);
+}
+
+.upgrade-card__action {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.upgrade-cost {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--accent-primary);
+}
+
+.upgrade-maxed {
+  color: var(--accent-success);
+  font-weight: 600;
+}
+
+/* ============================================
+   Pause Overlay
+   ============================================ */
+.pause-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+}
+
+.pause-actions .btn {
+  width: 100%;
+}

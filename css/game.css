@@ -1,0 +1,462 @@
+/* ============================================
+   Stadium Legends - Gameplay Styles
+   ============================================ */
+
+/* ============================================
+   Game HUD
+   ============================================ */
+.game-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md);
+  background-color: var(--bg-secondary);
+  border-bottom: 2px solid var(--bg-tertiary);
+}
+
+.hud-left,
+.hud-right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.hud-score,
+.hud-combo,
+.hud-accuracy {
+  text-align: center;
+}
+
+.hud-label {
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.hud-value {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+}
+
+.hud-center {
+  text-align: center;
+}
+
+.hud-money {
+  position: relative;
+}
+
+.money-total {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--accent-secondary);
+}
+
+.money-change {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.money-change.show {
+  opacity: 1;
+  animation: moneyPop 0.5s ease;
+}
+
+.money-change.positive {
+  color: var(--accent-success);
+}
+
+.money-change.negative {
+  color: var(--accent-danger);
+}
+
+@keyframes moneyPop {
+  0% {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-50%) translateY(-20px);
+    opacity: 0;
+  }
+}
+
+/* ============================================
+   Game Area
+   ============================================ */
+.game-area {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+  overflow: hidden;
+}
+
+/* ============================================
+   Note Highway
+   ============================================ */
+.note-highway {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  padding: 0 var(--spacing-lg);
+  position: relative;
+}
+
+.lane {
+  flex: 1;
+  max-width: 100px;
+  background: linear-gradient(180deg, 
+    transparent 0%,
+    rgba(255, 255, 255, 0.02) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+
+.lane[data-lane="0"] { --lane-color: var(--lane-1); }
+.lane[data-lane="1"] { --lane-color: var(--lane-2); }
+.lane[data-lane="2"] { --lane-color: var(--lane-3); }
+.lane[data-lane="3"] { --lane-color: var(--lane-4); }
+
+/* ============================================
+   Notes
+   ============================================ */
+.note {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70%;
+  height: 30px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(180deg, var(--lane-color), rgba(0, 0, 0, 0.3));
+  box-shadow: 
+    0 0 10px var(--lane-color),
+    inset 0 2px 4px rgba(255, 255, 255, 0.3);
+  transition: transform 0.05s linear;
+}
+
+.note.hit-perfect {
+  animation: notePerfect 0.3s ease forwards;
+}
+
+.note.hit-good {
+  animation: noteGood 0.3s ease forwards;
+}
+
+.note.hit-miss {
+  animation: noteMiss 0.3s ease forwards;
+}
+
+@keyframes notePerfect {
+  0% {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(-50%) scale(1.5);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(-50%) scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes noteGood {
+  0% {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-50%) scale(1.3);
+    opacity: 0;
+  }
+}
+
+@keyframes noteMiss {
+  0% {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-50%) translateY(20px) scale(0.5);
+    opacity: 0;
+  }
+}
+
+/* ============================================
+   Hit Zone with Buffer Lines
+   ============================================ */
+.hit-zone-container {
+  position: relative;
+}
+
+.hit-zone-buffer {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - var(--spacing-lg) * 2);
+  max-width: 416px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.buffer-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+
+.buffer-line--top {
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(247, 201, 72, 0.6) 20%, 
+    rgba(247, 201, 72, 0.6) 80%, 
+    transparent 100%);
+}
+
+.buffer-line--bottom {
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(247, 201, 72, 0.6) 20%, 
+    rgba(247, 201, 72, 0.6) 80%, 
+    transparent 100%);
+}
+
+.buffer-line__label {
+  position: absolute;
+  right: -60px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--font-size-xs);
+  color: var(--accent-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.7;
+}
+
+.hit-zone-glow {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: linear-gradient(180deg,
+    rgba(247, 201, 72, 0.05) 0%,
+    rgba(247, 201, 72, 0.15) 50%,
+    rgba(247, 201, 72, 0.05) 100%);
+  pointer-events: none;
+}
+
+.hit-zone {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--bg-secondary);
+}
+
+.hit-target {
+  flex: 1;
+  max-width: 100px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-tertiary);
+  border: 3px solid var(--lane-color);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--text-muted);
+  transition: all var(--transition-fast);
+}
+
+.hit-target[data-lane="0"] { --lane-color: var(--lane-1); }
+.hit-target[data-lane="1"] { --lane-color: var(--lane-2); }
+.hit-target[data-lane="2"] { --lane-color: var(--lane-3); }
+.hit-target[data-lane="3"] { --lane-color: var(--lane-4); }
+
+.hit-target.active {
+  background-color: var(--lane-color);
+  color: var(--text-primary);
+  transform: scale(1.05);
+  box-shadow: 0 0 20px var(--lane-color);
+}
+
+.hit-target.perfect {
+  animation: hitPerfect 0.3s ease;
+}
+
+.hit-target.good {
+  animation: hitGood 0.3s ease;
+}
+
+.hit-target.miss {
+  animation: hitMiss 0.3s ease;
+}
+
+@keyframes hitPerfect {
+  0% { box-shadow: 0 0 0 0 var(--grade-perfect); }
+  50% { box-shadow: 0 0 30px 10px var(--grade-perfect); }
+  100% { box-shadow: 0 0 0 0 var(--grade-perfect); }
+}
+
+@keyframes hitGood {
+  0% { box-shadow: 0 0 0 0 var(--grade-good); }
+  50% { box-shadow: 0 0 20px 5px var(--grade-good); }
+  100% { box-shadow: 0 0 0 0 var(--grade-good); }
+}
+
+@keyframes hitMiss {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* ============================================
+   Touch Controls (Mobile)
+   ============================================ */
+.touch-controls {
+  display: none;
+  justify-content: center;
+  gap: 4px;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--bg-secondary);
+  border-top: 2px solid var(--bg-tertiary);
+}
+
+.touch-btn {
+  flex: 1;
+  max-width: 100px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-card);
+  border: 3px solid var(--lane-color);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  transition: all var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.touch-btn[data-lane="0"] { --lane-color: var(--lane-1); }
+.touch-btn[data-lane="1"] { --lane-color: var(--lane-2); }
+.touch-btn[data-lane="2"] { --lane-color: var(--lane-3); }
+.touch-btn[data-lane="3"] { --lane-color: var(--lane-4); }
+
+.touch-btn:active,
+.touch-btn.pressed {
+  background-color: var(--lane-color);
+  transform: scale(0.95);
+}
+
+/* ============================================
+   Progress Bar
+   ============================================ */
+.game-progress {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background-color: var(--bg-secondary);
+}
+
+.progress-bar {
+  height: 6px;
+  background-color: var(--bg-tertiary);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+  border-radius: var(--radius-full);
+  transition: width 0.1s linear;
+}
+
+/* ============================================
+   Hit Feedback Text
+   ============================================ */
+.hit-feedback {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  text-transform: uppercase;
+  pointer-events: none;
+  animation: feedbackPop 0.5s ease forwards;
+}
+
+.hit-feedback.perfect {
+  color: var(--grade-perfect);
+}
+
+.hit-feedback.good {
+  color: var(--grade-good);
+}
+
+.hit-feedback.miss {
+  color: var(--grade-miss);
+}
+
+@keyframes feedbackPop {
+  0% {
+    transform: translateX(-50%) translateY(0) scale(0.5);
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(-50%) translateY(-20px) scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-50%) translateY(-40px) scale(1);
+    opacity: 0;
+  }
+}
+
+/* ============================================
+   Combo Indicator
+   ============================================ */
+.combo-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: var(--font-size-3xl);
+  font-weight: 800;
+  color: var(--accent-secondary);
+  text-shadow: 0 0 20px rgba(247, 201, 72, 0.5);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.combo-indicator.show {
+  opacity: 1;
+  animation: comboPulse 0.5s ease;
+}
+
+@keyframes comboPulse {
+  0% { transform: translate(-50%, -50%) scale(0.5); }
+  50% { transform: translate(-50%, -50%) scale(1.2); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
