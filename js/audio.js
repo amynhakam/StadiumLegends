@@ -133,7 +133,25 @@ var Audio = (function() {
    * Initialize audio system
    */
   function init() {
-    // Audio context must be created after user interaction on mobile
+    console.log('Audio.init() called');
+    
+    // Check if on mobile
+    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    // Show enable sound button on mobile
+    var soundBtn = document.getElementById('btn-enable-sound');
+    if (soundBtn && isMobile) {
+      soundBtn.style.display = 'block';
+      soundBtn.addEventListener('click', function() {
+        forceUnlockAudio();
+        this.textContent = '🔊 Sound Enabled!';
+        this.style.background = '#4CAF50';
+        setTimeout(function() {
+          soundBtn.style.display = 'none';
+        }, 1000);
+      });
+    }
+    
     // Add listeners to ALL touch events to maximize chances of unlocking
     var unlockEvents = ['click', 'touchstart', 'touchend', 'mousedown', 'keydown'];
     
@@ -149,6 +167,66 @@ var Audio = (function() {
     });
     
     console.log('Audio module initialized, waiting for user interaction...');
+  }
+  
+  /**
+   * Force unlock audio - plays an actual audible tone to confirm
+   */
+  function forceUnlockAudio() {
+    console.log('forceUnlockAudio called');
+    
+    // Create context
+    if (!audioContext) {
+      try {
+        var AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioContext = new AudioContextClass();
+        console.log('Created audio context, state:', audioContext.state);
+      } catch (e) {
+        console.error('Failed to create audio context:', e);
+        alert('Audio not supported on this device');
+        return;
+      }
+    }
+    
+    // Resume context
+    if (audioContext.state === 'suspended') {
+      audioContext.resume().then(function() {
+        console.log('Audio context resumed');
+        playTestTone();
+      });
+    } else {
+      playTestTone();
+    }
+    
+    initialized = true;
+  }
+  
+  /**
+   * Play a test tone to confirm audio works
+   */
+  function playTestTone() {
+    if (!audioContext) return;
+    
+    try {
+      var osc = audioContext.createOscillator();
+      var gain = audioContext.createGain();
+      
+      osc.type = 'sine';
+      osc.frequency.value = 440; // A4 note
+      
+      gain.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+      
+      osc.connect(gain);
+      gain.connect(audioContext.destination);
+      
+      osc.start(audioContext.currentTime);
+      osc.stop(audioContext.currentTime + 0.3);
+      
+      console.log('Test tone played!');
+    } catch (e) {
+      console.error('Failed to play test tone:', e);
+    }
   }
 
   /**
