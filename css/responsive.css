@@ -220,7 +220,8 @@
   .buffer-line__label {
     font-size: 11px !important;
     font-weight: 800 !important;
-    right: 10px !important;
+    left: 10px !important;
+    right: auto !important;
   }
   
   .hit-zone-glow {

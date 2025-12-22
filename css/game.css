@@ -244,7 +244,7 @@
 
 .buffer-line__label {
   position: absolute;
-  right: 5px;
+  left: 5px;
   top: 50%;
   transform: translateY(-50%);
   font-size: 10px;
