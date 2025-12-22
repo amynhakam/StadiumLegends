@@ -13,9 +13,9 @@ var App = (function() {
     
     // Initialize modules
     Storage.init();
+    Audio.init();
+    Game.init();
     UI.init();
-    // Audio.init(); // Will be enabled in Phase 8
-    // Game.init();  // Will be enabled in Phase 9
     
     // Hide loading overlay
     hideLoading();

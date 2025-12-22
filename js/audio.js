@@ -134,11 +134,12 @@ var Audio = (function() {
    */
   function init() {
     // Audio context must be created after user interaction on mobile
-    // Don't use { once: true } - we need to keep trying on mobile
-    document.addEventListener('click', unlockAudio);
-    document.addEventListener('touchstart', unlockAudio);
-    document.addEventListener('touchend', unlockAudio);
-    document.addEventListener('keydown', unlockAudio);
+    // Add listeners to ALL touch events to maximize chances of unlocking
+    var unlockEvents = ['click', 'touchstart', 'touchend', 'mousedown', 'keydown'];
+    
+    unlockEvents.forEach(function(eventName) {
+      document.addEventListener(eventName, unlockAudio, { passive: true });
+    });
     
     // Also try on visibility change (coming back to tab)
     document.addEventListener('visibilitychange', function() {
@@ -146,6 +147,8 @@ var Audio = (function() {
         resumeAudio();
       }
     });
+    
+    console.log('Audio module initialized, waiting for user interaction...');
   }
 
   /**
@@ -155,8 +158,9 @@ var Audio = (function() {
     // Create context if needed
     if (!audioContext) {
       try {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        console.log('Audio context created');
+        var AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioContext = new AudioContextClass();
+        console.log('Audio context created, state:', audioContext.state);
       } catch (e) {
         console.error('Web Audio API not supported:', e);
         return;
@@ -166,24 +170,38 @@ var Audio = (function() {
     // Resume if suspended (mobile browsers suspend by default)
     if (audioContext.state === 'suspended') {
       audioContext.resume().then(function() {
-        console.log('Audio context resumed');
+        console.log('Audio context resumed successfully');
         initialized = true;
+        // Play silent buffer to fully unlock on iOS
+        playSilentBuffer();
       }).catch(function(e) {
         console.error('Failed to resume audio:', e);
       });
-    } else {
-      initialized = true;
+    } else if (audioContext.state === 'running') {
+      if (!initialized) {
+        // Play silent buffer to fully unlock on iOS
+        playSilentBuffer();
+        initialized = true;
+        console.log('Audio already running, initialized');
+      }
     }
+  }
+  
+  /**
+   * Play a silent buffer to unlock audio on iOS Safari
+   */
+  function playSilentBuffer() {
+    if (!audioContext) return;
     
-    // iOS Safari hack: play a silent buffer to fully unlock
-    if (!initialized && audioContext.state === 'running') {
+    try {
       var silentBuffer = audioContext.createBuffer(1, 1, 22050);
       var source = audioContext.createBufferSource();
       source.buffer = silentBuffer;
       source.connect(audioContext.destination);
       source.start(0);
-      initialized = true;
-      console.log('Audio unlocked with silent buffer');
+      console.log('Silent buffer played for iOS unlock');
+    } catch (e) {
+      console.log('Silent buffer failed:', e);
     }
   }
 
@@ -210,10 +228,21 @@ var Audio = (function() {
    */
   function ensureContext() {
     if (!audioContext) {
-      unlockAudio();
+      // Try to create context - may fail without user gesture
+      try {
+        var AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioContext = new AudioContextClass();
+        console.log('Audio context created in ensureContext');
+      } catch (e) {
+        console.log('Cannot create audio context yet');
+        return;
+      }
     }
+    
     if (audioContext && audioContext.state === 'suspended') {
-      audioContext.resume();
+      audioContext.resume().catch(function() {
+        console.log('Could not resume - waiting for user gesture');
+      });
     }
   }
 
