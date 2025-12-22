@@ -133,24 +133,75 @@ var Audio = (function() {
    * Initialize audio system
    */
   function init() {
-    // Audio context must be created after user interaction
-    document.addEventListener('click', initContext, { once: true });
-    document.addEventListener('touchstart', initContext, { once: true });
-    document.addEventListener('keydown', initContext, { once: true });
+    // Audio context must be created after user interaction on mobile
+    // Don't use { once: true } - we need to keep trying on mobile
+    document.addEventListener('click', unlockAudio);
+    document.addEventListener('touchstart', unlockAudio);
+    document.addEventListener('touchend', unlockAudio);
+    document.addEventListener('keydown', unlockAudio);
+    
+    // Also try on visibility change (coming back to tab)
+    document.addEventListener('visibilitychange', function() {
+      if (document.visibilityState === 'visible') {
+        resumeAudio();
+      }
+    });
+  }
+
+  /**
+   * Unlock audio on mobile (needs to happen on user gesture)
+   */
+  function unlockAudio() {
+    // Create context if needed
+    if (!audioContext) {
+      try {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        console.log('Audio context created');
+      } catch (e) {
+        console.error('Web Audio API not supported:', e);
+        return;
+      }
+    }
+    
+    // Resume if suspended (mobile browsers suspend by default)
+    if (audioContext.state === 'suspended') {
+      audioContext.resume().then(function() {
+        console.log('Audio context resumed');
+        initialized = true;
+      }).catch(function(e) {
+        console.error('Failed to resume audio:', e);
+      });
+    } else {
+      initialized = true;
+    }
+    
+    // iOS Safari hack: play a silent buffer to fully unlock
+    if (!initialized && audioContext.state === 'running') {
+      var silentBuffer = audioContext.createBuffer(1, 1, 22050);
+      var source = audioContext.createBufferSource();
+      source.buffer = silentBuffer;
+      source.connect(audioContext.destination);
+      source.start(0);
+      initialized = true;
+      console.log('Audio unlocked with silent buffer');
+    }
   }
 
   /**
    * Initialize audio context (requires user gesture)
    */
   function initContext() {
-    if (audioContext) return;
-
-    try {
-      audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      initialized = true;
-      console.log('Audio context initialized');
-    } catch (e) {
-      console.error('Web Audio API not supported:', e);
+    unlockAudio();
+  }
+  
+  /**
+   * Resume audio (call after tab becomes visible again)
+   */
+  function resumeAudio() {
+    if (audioContext && audioContext.state === 'suspended') {
+      audioContext.resume().then(function() {
+        console.log('Audio resumed after visibility change');
+      });
     }
   }
 
@@ -159,7 +210,7 @@ var Audio = (function() {
    */
   function ensureContext() {
     if (!audioContext) {
-      initContext();
+      unlockAudio();
     }
     if (audioContext && audioContext.state === 'suspended') {
       audioContext.resume();
