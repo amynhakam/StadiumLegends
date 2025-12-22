@@ -135,21 +135,27 @@ var Audio = (function() {
   function init() {
     console.log('Audio.init() called');
     
-    // Check if on mobile
-    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    
-    // Show enable sound button on mobile
+    // Setup enable sound button (always, not just mobile)
     var soundBtn = document.getElementById('btn-enable-sound');
-    if (soundBtn && isMobile) {
-      soundBtn.style.display = 'block';
+    if (soundBtn) {
+      console.log('Found sound button');
       soundBtn.addEventListener('click', function() {
+        console.log('Sound button clicked');
         forceUnlockAudio();
         this.textContent = '🔊 Sound Enabled!';
         this.style.background = '#4CAF50';
-        setTimeout(function() {
-          soundBtn.style.display = 'none';
-        }, 1000);
       });
+      
+      // Also handle touch
+      soundBtn.addEventListener('touchend', function(e) {
+        e.preventDefault();
+        console.log('Sound button touched');
+        forceUnlockAudio();
+        this.textContent = '🔊 Sound Enabled!';
+        this.style.background = '#4CAF50';
+      });
+    } else {
+      console.log('Sound button not found!');
     }
     
     // Add listeners to ALL touch events to maximize chances of unlocking
