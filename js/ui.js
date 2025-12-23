@@ -242,7 +242,9 @@ var UI = (function() {
    */
   function createStadiumCard(stadium, unlocked, canUnlock) {
     var card = document.createElement('div');
-    card.className = 'stadium-card' + (unlocked ? '' : ' locked');
+    // Only show as locked/blocked if player cannot afford it
+    var isBlocked = !unlocked && !canUnlock;
+    card.className = 'stadium-card' + (isBlocked ? ' locked' : '');
     
     var actionContent = '';
     if (unlocked) {
