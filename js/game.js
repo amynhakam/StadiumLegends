@@ -374,9 +374,9 @@ var Game = (function() {
       var pixelsPerMs = highwayHeight / travelTime;
       var bufferHeight = timingGood * 2 * pixelsPerMs;
       
-      // Position relative to hit zone (which is at the bottom)
-      var topOffset = -bufferHeight / 2 - 30; // 30px above center
-      var bottomOffset = bufferHeight / 2 - 30; // Below center
+      // Position both buffer lines above the hit buttons
+      var topOffset = -bufferHeight - 70; // EARLY line
+      var bottomOffset = -70; // LATE line just above buttons
       
       bufferTop.style.top = topOffset + 'px';
       bufferBottom.style.top = bottomOffset + 'px';
