@@ -346,6 +346,7 @@ var Audio = (function() {
 
   /**
    * Play instrument-specific hit sound
+   * Enhanced sounds based on upgrade level for more realistic instruments
    */
   function playHit(lane, quality) {
     ensureContext();
@@ -353,6 +354,12 @@ var Audio = (function() {
 
     var instrument = characterInstruments[currentCharacterId] || characterInstruments['stella-luna'];
     var frequency = instrument.hitFreqs[lane] || 440;
+    
+    // Get upgrade level for enhanced sounds (0=basic, 1=pro, 2=legend)
+    var upgradeLevel = 0;
+    if (typeof Storage !== 'undefined' && Storage.getUpgradeLevel) {
+      upgradeLevel = Storage.getUpgradeLevel(currentCharacterId) || 0;
+    }
     
     // Play instrument-specific sound based on quality
     if (quality === 'miss') {
@@ -362,19 +369,19 @@ var Audio = (function() {
     
     switch (instrument.hitSound) {
       case 'synth':
-        playSynthHit(frequency, quality);
+        playSynthHit(frequency, quality, upgradeLevel);
         break;
       case 'drum':
-        playDrumHit(lane, quality);
+        playDrumHit(lane, quality, upgradeLevel);
         break;
       case 'percussion':
-        playPercussionHit(lane, quality);
+        playPercussionHit(lane, quality, upgradeLevel);
         break;
       case 'guitar':
-        playElectricGuitarHit(frequency, quality);
+        playElectricGuitarHit(frequency, quality, upgradeLevel);
         break;
       case 'acoustic':
-        playAcousticGuitarHit(frequency, quality);
+        playAcousticGuitarHit(frequency, quality, upgradeLevel);
         break;
       default:
         playGenericHit(frequency, quality);
@@ -383,10 +390,22 @@ var Audio = (function() {
   
   /**
    * Synth hit - Dark, atmospheric pad sound (Stella Luna)
+   * Upgrade level adds: more oscillators, chorus effect, better filter sweeps
    */
-  function playSynthHit(frequency, quality) {
+  function playSynthHit(frequency, quality, upgradeLevel) {
+    upgradeLevel = upgradeLevel || 0;
     var duration = quality === 'perfect' ? 0.4 : 0.25;
     var gain = quality === 'perfect' ? 0.35 : 0.25;
+    
+    // Enhanced duration and richness for upgraded instruments
+    if (upgradeLevel >= 1) {
+      duration *= 1.3;
+      gain *= 1.1;
+    }
+    if (upgradeLevel >= 2) {
+      duration *= 1.2;
+      gain *= 1.1;
+    }
     
     // Main synth tone
     var osc1 = audioContext.createOscillator();
@@ -396,6 +415,11 @@ var Audio = (function() {
     
     osc1.type = 'sawtooth';
     osc1.frequency.value = frequency;
+    
+    // Pro upgrade: Add subtle detuning for analog warmth
+    if (upgradeLevel >= 1) {
+      osc1.detune.value = -5;
+    }
     
     osc2.type = 'sine';
     osc2.frequency.value = frequency * 2; // Octave up
@@ -421,29 +445,40 @@ var Audio = (function() {
   
   /**
    * Drum hit - 808-style drums (K-Fire)
+   * Upgrade level adds: punchier kicks, layered snares, crisper hi-hats
    */
-  function playDrumHit(lane, quality) {
+  function playDrumHit(lane, quality, upgradeLevel) {
+    upgradeLevel = upgradeLevel || 0;
     var gain = quality === 'perfect' ? 0.5 : 0.35;
+    
+    // Enhanced volume and punch for upgraded drums
+    if (upgradeLevel >= 1) gain *= 1.15;
+    if (upgradeLevel >= 2) gain *= 1.15;
     
     if (lane === 0) {
       // Kick drum - low 808
-      play808Kick(gain);
+      play808Kick(gain, upgradeLevel);
     } else if (lane === 1) {
       // Snare
-      playSnare(gain);
+      playSnare(gain, upgradeLevel);
     } else if (lane === 2) {
       // Hi-hat closed
-      playHiHat(gain, false);
+      playHiHat(gain, false, upgradeLevel);
     } else {
       // Hi-hat open
-      playHiHat(gain, true);
+      playHiHat(gain, true, upgradeLevel);
     }
   }
   
   /**
-   * 808 Kick drum
+   * 808 Kick drum - Enhanced with upgrade levels
+   * Pro: Adds sub-bass layer, Legend: Adds click transient for punch
    */
-  function play808Kick(gain) {
+  function play808Kick(gain, upgradeLevel) {
+    upgradeLevel = upgradeLevel || 0;
+    var duration = 0.4;
+    
+    // Main kick oscillator
     var osc = audioContext.createOscillator();
     var gainNode = audioContext.createGain();
     
@@ -452,19 +487,53 @@ var Audio = (function() {
     osc.frequency.exponentialRampToValueAtTime(40, audioContext.currentTime + 0.15);
     
     gainNode.gain.setValueAtTime(gain * sfxVolume, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
     
     osc.connect(gainNode);
     gainNode.connect(audioContext.destination);
     
     osc.start();
-    osc.stop(audioContext.currentTime + 0.4);
+    osc.stop(audioContext.currentTime + duration);
+    
+    // Pro upgrade: Add deep sub-bass layer
+    if (upgradeLevel >= 1) {
+      var subOsc = audioContext.createOscillator();
+      var subGain = audioContext.createGain();
+      subOsc.type = 'sine';
+      subOsc.frequency.setValueAtTime(60, audioContext.currentTime);
+      subOsc.frequency.exponentialRampToValueAtTime(30, audioContext.currentTime + 0.3);
+      subGain.gain.setValueAtTime(gain * 0.6 * sfxVolume, audioContext.currentTime);
+      subGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+      subOsc.connect(subGain);
+      subGain.connect(audioContext.destination);
+      subOsc.start();
+      subOsc.stop(audioContext.currentTime + 0.5);
+    }
+    
+    // Legend upgrade: Add click transient for punch
+    if (upgradeLevel >= 2) {
+      var clickOsc = audioContext.createOscillator();
+      var clickGain = audioContext.createGain();
+      clickOsc.type = 'triangle';
+      clickOsc.frequency.setValueAtTime(1000, audioContext.currentTime);
+      clickOsc.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.02);
+      clickGain.gain.setValueAtTime(gain * 0.4 * sfxVolume, audioContext.currentTime);
+      clickGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.03);
+      clickOsc.connect(clickGain);
+      clickGain.connect(audioContext.destination);
+      clickOsc.start();
+      clickOsc.stop(audioContext.currentTime + 0.03);
+    }
   }
   
   /**
-   * Snare drum
+   * Snare drum - Enhanced with upgrade levels
+   * Pro: Tighter noise, Legend: Adds snare wire rattle
    */
-  function playSnare(gain) {
+  function playSnare(gain, upgradeLevel) {
+    upgradeLevel = upgradeLevel || 0;
+    var noiseDecay = upgradeLevel >= 1 ? 0.12 : 0.15; // Tighter on pro
+    
     // Noise component
     var bufferSize = audioContext.sampleRate * 0.2;
     var buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
@@ -478,16 +547,16 @@ var Audio = (function() {
     
     var noiseFilter = audioContext.createBiquadFilter();
     noiseFilter.type = 'highpass';
-    noiseFilter.frequency.value = 1000;
+    noiseFilter.frequency.value = upgradeLevel >= 2 ? 1500 : 1000; // Crisper on legend
     
     var noiseGain = audioContext.createGain();
     noiseGain.gain.setValueAtTime(gain * 0.7 * sfxVolume, audioContext.currentTime);
-    noiseGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+    noiseGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + noiseDecay);
     
     // Tone component
     var osc = audioContext.createOscillator();
     osc.type = 'triangle';
-    osc.frequency.value = 200;
+    osc.frequency.value = upgradeLevel >= 1 ? 180 : 200; // Deeper body on pro
     
     var oscGain = audioContext.createGain();
     oscGain.gain.setValueAtTime(gain * 0.5 * sfxVolume, audioContext.currentTime);
@@ -504,12 +573,36 @@ var Audio = (function() {
     osc.start();
     noise.stop(audioContext.currentTime + 0.2);
     osc.stop(audioContext.currentTime + 0.1);
+    
+    // Legend upgrade: Add snare wire buzz
+    if (upgradeLevel >= 2) {
+      var wireBuffer = audioContext.createBuffer(1, audioContext.sampleRate * 0.15, audioContext.sampleRate);
+      var wireData = wireBuffer.getChannelData(0);
+      for (var j = 0; j < wireData.length; j++) {
+        wireData[j] = (Math.random() * 2 - 1) * Math.exp(-j / (audioContext.sampleRate * 0.05));
+      }
+      var wire = audioContext.createBufferSource();
+      wire.buffer = wireBuffer;
+      var wireFilter = audioContext.createBiquadFilter();
+      wireFilter.type = 'bandpass';
+      wireFilter.frequency.value = 5000;
+      wireFilter.Q.value = 2;
+      var wireGain = audioContext.createGain();
+      wireGain.gain.setValueAtTime(gain * 0.25 * sfxVolume, audioContext.currentTime);
+      wire.connect(wireFilter);
+      wireFilter.connect(wireGain);
+      wireGain.connect(audioContext.destination);
+      wire.start();
+      wire.stop(audioContext.currentTime + 0.15);
+    }
   }
   
   /**
-   * Hi-hat
+   * Hi-hat - Enhanced with upgrade levels
+   * Pro: Better frequency response, Legend: Adds shimmer overtones
    */
-  function playHiHat(gain, open) {
+  function playHiHat(gain, open, upgradeLevel) {
+    upgradeLevel = upgradeLevel || 0;
     var bufferSize = audioContext.sampleRate * (open ? 0.3 : 0.1);
     var buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
     var data = buffer.getChannelData(0);
@@ -522,7 +615,9 @@ var Audio = (function() {
     
     var filter = audioContext.createBiquadFilter();
     filter.type = 'highpass';
-    filter.frequency.value = open ? 7000 : 9000;
+    // Higher frequency cutoff for upgraded hats = cleaner sound
+    var baseFreq = open ? 7000 : 9000;
+    filter.frequency.value = baseFreq + (upgradeLevel * 1000);
     
     var gainNode = audioContext.createGain();
     var duration = open ? 0.3 : 0.08;
@@ -535,33 +630,55 @@ var Audio = (function() {
     
     noise.start();
     noise.stop(audioContext.currentTime + duration);
-  }
-  
-  /**
-   * Percussion hit - Latin drums (El Conejo)
-   */
-  function playPercussionHit(lane, quality) {
-    var gain = quality === 'perfect' ? 0.5 : 0.35;
     
-    if (lane === 0) {
-      // Bass drum (bombo)
-      play808Kick(gain);
-    } else if (lane === 1) {
-      // Conga high
-      playConga(gain, true);
-    } else if (lane === 2) {
-      // Conga low
-      playConga(gain, false);
-    } else {
-      // Clap
-      playClap(gain);
+    // Legend upgrade: Add metallic shimmer
+    if (upgradeLevel >= 2) {
+      var shimmerOsc = audioContext.createOscillator();
+      shimmerOsc.type = 'square';
+      shimmerOsc.frequency.value = open ? 12000 : 14000;
+      var shimmerGain = audioContext.createGain();
+      shimmerGain.gain.setValueAtTime(gain * 0.08 * sfxVolume, audioContext.currentTime);
+      shimmerGain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration * 0.5);
+      shimmerOsc.connect(shimmerGain);
+      shimmerGain.connect(audioContext.destination);
+      shimmerOsc.start();
+      shimmerOsc.stop(audioContext.currentTime + duration * 0.5);
     }
   }
   
   /**
-   * Conga drum
+   * Percussion hit - Latin drums (El Conejo)
+   * Upgrade level adds: richer resonance, better attack
    */
-  function playConga(gain, high) {
+  function playPercussionHit(lane, quality, upgradeLevel) {
+    upgradeLevel = upgradeLevel || 0;
+    var gain = quality === 'perfect' ? 0.5 : 0.35;
+    
+    // Enhanced punch for upgraded percussion
+    if (upgradeLevel >= 1) gain *= 1.15;
+    if (upgradeLevel >= 2) gain *= 1.15;
+    
+    if (lane === 0) {
+      // Bass drum (bombo)
+      play808Kick(gain, upgradeLevel);
+    } else if (lane === 1) {
+      // Conga high
+      playConga(gain, true, upgradeLevel);
+    } else if (lane === 2) {
+      // Conga low
+      playConga(gain, false, upgradeLevel);
+    } else {
+      // Clap
+      playClap(gain, upgradeLevel);
+    }
+  }
+  
+  /**
+   * Conga drum - Enhanced with upgrade levels
+   * Pro: Better resonance, Legend: Adds skin slap
+   */
+  function playConga(gain, high, upgradeLevel) {
+    upgradeLevel = upgradeLevel || 0;
     var osc = audioContext.createOscillator();
     var gainNode = audioContext.createGain();
     
@@ -570,22 +687,43 @@ var Audio = (function() {
     osc.frequency.setValueAtTime(startFreq, audioContext.currentTime);
     osc.frequency.exponentialRampToValueAtTime(startFreq * 0.5, audioContext.currentTime + 0.15);
     
+    // Longer decay for upgraded congas
+    var decay = 0.2 + (upgradeLevel * 0.05);
     gainNode.gain.setValueAtTime(gain * sfxVolume, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + decay);
     
     osc.connect(gainNode);
     gainNode.connect(audioContext.destination);
     
     osc.start();
-    osc.stop(audioContext.currentTime + 0.2);
+    osc.stop(audioContext.currentTime + decay);
+    
+    // Legend upgrade: Add skin slap attack
+    if (upgradeLevel >= 2) {
+      var slapOsc = audioContext.createOscillator();
+      slapOsc.type = 'triangle';
+      slapOsc.frequency.setValueAtTime(startFreq * 3, audioContext.currentTime);
+      slapOsc.frequency.exponentialRampToValueAtTime(startFreq, audioContext.currentTime + 0.01);
+      var slapGain = audioContext.createGain();
+      slapGain.gain.setValueAtTime(gain * 0.4 * sfxVolume, audioContext.currentTime);
+      slapGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.02);
+      slapOsc.connect(slapGain);
+      slapGain.connect(audioContext.destination);
+      slapOsc.start();
+      slapOsc.stop(audioContext.currentTime + 0.02);
+    }
   }
   
   /**
-   * Hand clap
+   * Hand clap - Enhanced with upgrade levels
+   * Pro: More clap layers, Legend: Stadium clap effect
    */
-  function playClap(gain) {
+  function playClap(gain, upgradeLevel) {
+    upgradeLevel = upgradeLevel || 0;
+    var numClaps = upgradeLevel >= 1 ? 4 : 3; // More layers on pro
+    
     // Multiple short noise bursts
-    for (var i = 0; i < 3; i++) {
+    for (var i = 0; i < numClaps; i++) {
       setTimeout(function(index) {
         return function() {
           var bufferSize = audioContext.sampleRate * 0.02;
@@ -615,23 +753,60 @@ var Audio = (function() {
         };
       }(i), i * 10);
     }
+    
+    // Legend upgrade: Add reverb-like tail for stadium clap
+    if (upgradeLevel >= 2) {
+      setTimeout(function() {
+        var tailSize = audioContext.sampleRate * 0.15;
+        var tailBuffer = audioContext.createBuffer(1, tailSize, audioContext.sampleRate);
+        var tailData = tailBuffer.getChannelData(0);
+        for (var k = 0; k < tailSize; k++) {
+          tailData[k] = (Math.random() * 2 - 1) * Math.exp(-k / (audioContext.sampleRate * 0.05));
+        }
+        var tail = audioContext.createBufferSource();
+        tail.buffer = tailBuffer;
+        var tailFilter = audioContext.createBiquadFilter();
+        tailFilter.type = 'bandpass';
+        tailFilter.frequency.value = 1500;
+        var tailGain = audioContext.createGain();
+        tailGain.gain.setValueAtTime(gain * 0.2 * sfxVolume, audioContext.currentTime);
+        tail.connect(tailFilter);
+        tailFilter.connect(tailGain);
+        tailGain.connect(audioContext.destination);
+        tail.start();
+        tail.stop(audioContext.currentTime + 0.15);
+      }, 40);
+    }
   }
   
   /**
    * Electric guitar hit - Distorted power chord (Ziggy Flash)
+   * Pro: More distortion + sustain, Legend: Cabinet simulation + feedback
    */
-  function playElectricGuitarHit(frequency, quality) {
+  function playElectricGuitarHit(frequency, quality, upgradeLevel) {
+    upgradeLevel = upgradeLevel || 0;
     var duration = quality === 'perfect' ? 0.5 : 0.3;
     var gain = quality === 'perfect' ? 0.35 : 0.25;
+    
+    // Enhanced sustain and gain for upgraded guitars
+    if (upgradeLevel >= 1) {
+      duration *= 1.4;
+      gain *= 1.1;
+    }
+    if (upgradeLevel >= 2) {
+      duration *= 1.3;
+      gain *= 1.1;
+    }
     
     // Create power chord (root + fifth)
     var osc1 = audioContext.createOscillator();
     var osc2 = audioContext.createOscillator();
     var osc3 = audioContext.createOscillator();
     
-    // Distortion via waveshaper
+    // Distortion via waveshaper - more distortion on upgraded
+    var distortionAmount = 100 + (upgradeLevel * 50);
     var distortion = audioContext.createWaveShaper();
-    distortion.curve = makeDistortionCurve(100);
+    distortion.curve = makeDistortionCurve(distortionAmount);
     
     var gainNode = audioContext.createGain();
     var filter = audioContext.createBiquadFilter();
@@ -645,8 +820,15 @@ var Audio = (function() {
     osc3.type = 'square';
     osc3.frequency.value = frequency * 2; // Octave for bite
     
+    // Pro upgrade: Detune for thicker sound
+    if (upgradeLevel >= 1) {
+      osc1.detune.value = -8;
+      osc2.detune.value = 8;
+    }
+    
     filter.type = 'lowpass';
-    filter.frequency.value = 3000;
+    // Legend upgrade: Higher cutoff for more presence
+    filter.frequency.value = upgradeLevel >= 2 ? 4000 : 3000;
     
     gainNode.gain.setValueAtTime(gain * sfxVolume, audioContext.currentTime);
     gainNode.gain.setValueAtTime(gain * sfxVolume, audioContext.currentTime + 0.02);
@@ -665,6 +847,23 @@ var Audio = (function() {
     osc1.stop(audioContext.currentTime + duration);
     osc2.stop(audioContext.currentTime + duration);
     osc3.stop(audioContext.currentTime + duration);
+    
+    // Legend upgrade: Add harmonic feedback squeal
+    if (upgradeLevel >= 2 && quality === 'perfect') {
+      setTimeout(function() {
+        var feedbackOsc = audioContext.createOscillator();
+        feedbackOsc.type = 'sine';
+        feedbackOsc.frequency.setValueAtTime(frequency * 4, audioContext.currentTime);
+        feedbackOsc.frequency.exponentialRampToValueAtTime(frequency * 3, audioContext.currentTime + 0.2);
+        var fbGain = audioContext.createGain();
+        fbGain.gain.setValueAtTime(gain * 0.15 * sfxVolume, audioContext.currentTime);
+        fbGain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.3);
+        feedbackOsc.connect(fbGain);
+        fbGain.connect(audioContext.destination);
+        feedbackOsc.start();
+        feedbackOsc.stop(audioContext.currentTime + 0.3);
+      }, duration * 400);
+    }
   }
   
   /**
@@ -683,31 +882,55 @@ var Audio = (function() {
   
   /**
    * Acoustic guitar hit - Clean strum (Dolly Mae)
+   * Pro: Richer harmonics, Legend: Full chord voicing with body resonance
    */
-  function playAcousticGuitarHit(frequency, quality) {
+  function playAcousticGuitarHit(frequency, quality, upgradeLevel) {
+    upgradeLevel = upgradeLevel || 0;
     var duration = quality === 'perfect' ? 0.6 : 0.4;
     var gain = quality === 'perfect' ? 0.4 : 0.3;
+    
+    // Enhanced sustain for upgraded acoustics
+    if (upgradeLevel >= 1) {
+      duration *= 1.3;
+      gain *= 1.1;
+    }
+    if (upgradeLevel >= 2) {
+      duration *= 1.2;
+      gain *= 1.1;
+    }
     
     // Create chord tones with slight delays (strum effect)
     var delays = [0, 0.015, 0.03, 0.045];
     var chordTones = [frequency, frequency * 1.25, frequency * 1.5, frequency * 2];
     
+    // Pro upgrade: Add more chord tones
+    if (upgradeLevel >= 1) {
+      chordTones.push(frequency * 2.5);
+      delays.push(0.06);
+    }
+    // Legend upgrade: Full 6-string voicing
+    if (upgradeLevel >= 2) {
+      chordTones.push(frequency * 3);
+      delays.push(0.075);
+    }
+    
     for (var i = 0; i < chordTones.length; i++) {
-      (function(freq, delay, idx) {
+      (function(freq, delay, idx, upgLevel) {
         setTimeout(function() {
           var osc = audioContext.createOscillator();
           var gainNode = audioContext.createGain();
           var filter = audioContext.createBiquadFilter();
           
-          // Triangle wave for acoustic warmth
-          osc.type = 'triangle';
+          // Triangle wave for acoustic warmth, with harmonics for upgraded
+          osc.type = upgLevel >= 2 ? 'sawtooth' : 'triangle';
           osc.frequency.value = freq;
           
           filter.type = 'lowpass';
-          filter.frequency.value = 2500;
+          // Higher cutoff for upgraded = brighter tone
+          filter.frequency.value = 2500 + (upgLevel * 500);
           filter.Q.value = 1;
           
-          var vol = gain * (1 - idx * 0.1) * sfxVolume;
+          var vol = gain * (1 - idx * 0.08) * sfxVolume;
           gainNode.gain.setValueAtTime(vol, audioContext.currentTime);
           gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration - delay);
           
@@ -718,7 +941,21 @@ var Audio = (function() {
           osc.start();
           osc.stop(audioContext.currentTime + duration - delay);
         }, delay * 1000);
-      })(chordTones[i], delays[i], i);
+      })(chordTones[i], delays[i], i, upgradeLevel);
+    }
+    
+    // Legend upgrade: Add body resonance
+    if (upgradeLevel >= 2) {
+      var bodyOsc = audioContext.createOscillator();
+      bodyOsc.type = 'sine';
+      bodyOsc.frequency.value = frequency * 0.5; // Sub harmonic for body
+      var bodyGain = audioContext.createGain();
+      bodyGain.gain.setValueAtTime(gain * 0.2 * sfxVolume, audioContext.currentTime);
+      bodyGain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration * 0.8);
+      bodyOsc.connect(bodyGain);
+      bodyGain.connect(audioContext.destination);
+      bodyOsc.start();
+      bodyOsc.stop(audioContext.currentTime + duration * 0.8);
     }
   }
   

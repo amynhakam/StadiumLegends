@@ -33,8 +33,9 @@ var Config = (function() {
     TIMING_BONUS_LEGEND: 0.4,   // +40%
     
     // Upgrade Costs
-    UPGRADE_COST_PRO: 3000000,
-    UPGRADE_COST_LEGEND: 10000000,
+    UPGRADE_COST_PRO: 1000,        // $1,000
+    UPGRADE_COST_LEGEND: 10000,    // $10,000
+    UPGRADE_COST_MASTER: 100000,   // $100,000
     
     // Gameplay
     NOTE_SPEED: 400,            // pixels per second
