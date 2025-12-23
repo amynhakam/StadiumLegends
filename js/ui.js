@@ -330,7 +330,7 @@ var UI = (function() {
         '<div class="stadium-card__info">' +
           '<h3 class="stadium-card__name" id="local-bar-name">Finding local bar...</h3>' +
           '<p class="stadium-card__details" id="local-bar-location">Searching near hometown...</p>' +
-          (unlocked ? '<p class="stadium-card__gig-info">Promised: $' + Storage.formatMoney(stadium.gigPayout) + '</p>' : '') +
+          (unlocked ? '<p class="stadium-card__gig-info">Gig Pays: $' + Storage.formatMoney(stadium.gigPayout) + '</p>' : '') +
         '</div>' +
         '<div class="stadium-card__action">' + actionContent + '</div>';
     } else if (stadium.id === 'club-venue') {
@@ -339,7 +339,7 @@ var UI = (function() {
         '<div class="stadium-card__info">' +
           '<h3 class="stadium-card__name" id="club-venue-name">Finding local club...</h3>' +
           '<p class="stadium-card__details" id="club-venue-location">Searching near hometown...</p>' +
-          (unlocked ? '<p class="stadium-card__gig-info">Promised: $' + Storage.formatMoney(stadium.gigPayout) + '</p>' : '') +
+          (unlocked ? '<p class="stadium-card__gig-info">Gig Pays: $' + Storage.formatMoney(stadium.gigPayout) + '</p>' : '') +
         '</div>' +
         '<div class="stadium-card__action">' + actionContent + '</div>';
     } else if (stadium.id === 'theater') {
@@ -348,7 +348,7 @@ var UI = (function() {
         '<div class="stadium-card__info">' +
           '<h3 class="stadium-card__name" id="theater-venue-name">Finding local theater...</h3>' +
           '<p class="stadium-card__details" id="theater-venue-location">Searching near hometown...</p>' +
-          (unlocked ? '<p class="stadium-card__gig-info">Promised: $' + Storage.formatMoney(stadium.gigPayout) + '</p>' : '') +
+          (unlocked ? '<p class="stadium-card__gig-info">Gig Pays: $' + Storage.formatMoney(stadium.gigPayout) + '</p>' : '') +
         '</div>' +
         '<div class="stadium-card__action">' + actionContent + '</div>';
     } else if (stadium.id === 'arena') {
@@ -357,7 +357,7 @@ var UI = (function() {
         '<div class="stadium-card__info">' +
           '<h3 class="stadium-card__name" id="arena-venue-name">Finding major stadium...</h3>' +
           '<p class="stadium-card__details" id="arena-venue-location">Searching for arenas...</p>' +
-          (unlocked ? '<p class="stadium-card__gig-info">Promised: $' + Storage.formatMoney(stadium.gigPayout) + '</p>' : '') +
+          (unlocked ? '<p class="stadium-card__gig-info">Gig Pays: $' + Storage.formatMoney(stadium.gigPayout) + '</p>' : '') +
         '</div>' +
         '<div class="stadium-card__action">' + actionContent + '</div>';
     } else {
@@ -366,7 +366,7 @@ var UI = (function() {
         '<div class="stadium-card__info">' +
           '<h3 class="stadium-card__name">' + displayName + '</h3>' +
           '<p class="stadium-card__details">' + displayLocation + '</p>' +
-          (unlocked ? '<p class="stadium-card__gig-info">Promised: $' + Storage.formatMoney(stadium.gigPayout) + '</p>' : '') +
+          (unlocked ? '<p class="stadium-card__gig-info">Gig Pays: $' + Storage.formatMoney(stadium.gigPayout) + '</p>' : '') +
         '</div>' +
         '<div class="stadium-card__action">' + actionContent + '</div>';
     }
