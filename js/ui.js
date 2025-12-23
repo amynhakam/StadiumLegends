@@ -25,6 +25,7 @@ var UI = (function() {
     // Title screen buttons
     var btnPlay = document.getElementById('btn-play');
     var btnShop = document.getElementById('btn-shop');
+    var btnReset = document.getElementById('btn-reset');
     
     if (btnPlay) {
       btnPlay.addEventListener('click', function() {
@@ -38,6 +39,17 @@ var UI = (function() {
         Audio.playClick();
         showScreen('upgrade-shop');
         populateUpgradeShop();
+      });
+    }
+    
+    if (btnReset) {
+      btnReset.addEventListener('click', function() {
+        Audio.playClick();
+        if (confirm('Are you sure you want to start over? This will reset all your progress, money, and unlocks.')) {
+          Storage.reset();
+          updateAllBalanceDisplays();
+          showToast('Game progress has been reset!', 'success');
+        }
       });
     }
 
