@@ -483,17 +483,21 @@ var UI = (function() {
     card.className = 'upgrade-card';
     card.style.setProperty('--character-color', character.colors.accent);
     
-    // Build tier badges
+    // Build tier badges with prices
     var tierBadges = '';
     var tierNames = ['Basic', 'Pro', 'Legend'];
+    var tierPrices = ['Free', '$' + Storage.formatMoney(Config.UPGRADE_COST_PRO), '$' + Storage.formatMoney(Config.UPGRADE_COST_LEGEND)];
     for (var i = 0; i < 3; i++) {
       var badgeClass = 'tier-badge';
-      if (i < upgradeLevel) {
+      if (i <= upgradeLevel) {
         badgeClass += ' active';
-      } else if (i === upgradeLevel && i < 2) {
+      } else if (i === upgradeLevel + 1) {
         badgeClass += ' available';
       }
-      tierBadges += '<span class="' + badgeClass + '">' + tierNames[i] + '</span>';
+      tierBadges += '<span class="' + badgeClass + '">' + 
+        '<span class="tier-name">' + tierNames[i] + '</span>' +
+        '<span class="tier-price">' + tierPrices[i] + '</span>' +
+      '</span>';
     }
     
     var actionContent = '';
@@ -501,6 +505,7 @@ var UI = (function() {
       actionContent = '<span class="upgrade-maxed">✓ Maxed Out</span>';
     } else {
       actionContent = 
+        '<span class="upgrade-next">Next: ' + nextUpgrade + '</span>' +
         '<span class="upgrade-cost">$' + Storage.formatMoney(upgradeCost) + '</span>' +
         '<button class="btn btn--primary' + (canAfford ? '' : '" disabled') + '">Upgrade</button>';
     }
