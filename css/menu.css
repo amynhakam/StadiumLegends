@@ -415,6 +415,53 @@
   font-weight: 600;
 }
 
+.results-performance {
+  margin-bottom: var(--spacing-md);
+  text-align: center;
+}
+
+.results-performance .performance-rating {
+  display: block;
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  margin-bottom: var(--spacing-xs);
+}
+
+.results-performance .performance-perfect {
+  color: #ffd700;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.results-performance .performance-great {
+  color: var(--accent-success);
+}
+
+.results-performance .performance-good {
+  color: var(--accent-secondary);
+}
+
+.results-performance .performance-poor {
+  color: var(--accent-danger);
+}
+
+.results-performance .payout-breakdown {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+}
+
+.stadium-card__gig-info {
+  font-size: var(--font-size-xs);
+  color: var(--accent-success);
+  margin-top: var(--spacing-xs);
+}
+
+.stadium-card__payout {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--accent-success);
+}
+
 .results-earnings {
   margin-bottom: var(--spacing-md);
 }

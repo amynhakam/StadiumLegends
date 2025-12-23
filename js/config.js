@@ -11,12 +11,18 @@ var Config = (function() {
     VERSION: '1.0.0',
     
     // Starting Values
-    STARTING_BALANCE: 1000000,
+    STARTING_BALANCE: 0,
     
-    // Scoring
-    SCORE_PERFECT: 500000,
-    SCORE_GOOD: 100000,
-    SCORE_MISS: -500000,
+    // Scoring (for display only, not money)
+    SCORE_PERFECT: 1000,
+    SCORE_GOOD: 500,
+    SCORE_MISS: 0,
+    
+    // Accuracy Tiers for Gig Payout
+    ACCURACY_POOR_MAX: 33,      // 0-33% = Poor (lose 50%)
+    ACCURACY_GOOD_MAX: 65,      // 34-65% = Good (100%)
+    ACCURACY_GREAT_MAX: 99,     // 66-99% = Great (150%)
+    // 100% = Perfect (200%)
     
     // Timing Windows (milliseconds)
     TIMING_PERFECT: 200,

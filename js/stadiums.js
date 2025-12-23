@@ -14,6 +14,7 @@ var Stadiums = (function() {
       capacity: 100,
       multiplier: 1.0,
       unlockCost: 0,
+      gigPayout: 1000,
       tier: 1
     },
     {
@@ -23,7 +24,8 @@ var Stadiums = (function() {
       location: 'Downtown',
       capacity: 500,
       multiplier: 1.2,
-      unlockCost: 500000,
+      unlockCost: 500,
+      gigPayout: 10000,
       tier: 2
     },
     {
@@ -33,7 +35,8 @@ var Stadiums = (function() {
       location: 'City Center',
       capacity: 2000,
       multiplier: 1.5,
-      unlockCost: 2000000,
+      unlockCost: 5000,
+      gigPayout: 100000,
       tier: 3
     },
     {
@@ -43,7 +46,8 @@ var Stadiums = (function() {
       location: 'Sports District',
       capacity: 15000,
       multiplier: 2.0,
-      unlockCost: 5000000,
+      unlockCost: 50000,
+      gigPayout: 1000000,
       tier: 4
     },
     {
@@ -53,7 +57,8 @@ var Stadiums = (function() {
       location: 'New York, USA',
       capacity: 20000,
       multiplier: 2.5,
-      unlockCost: 10000000,
+      unlockCost: 500000,
+      gigPayout: 10000000,
       tier: 5
     },
     {
@@ -63,7 +68,8 @@ var Stadiums = (function() {
       location: 'London, UK',
       capacity: 90000,
       multiplier: 3.0,
-      unlockCost: 20000000,
+      unlockCost: 5000000,
+      gigPayout: 20000000,
       tier: 6
     }
   ];

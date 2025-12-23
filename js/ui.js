@@ -260,9 +260,9 @@ var UI = (function() {
     
     var actionContent = '';
     if (unlocked) {
-      actionContent = '<span class="stadium-card__multiplier">' + stadium.multiplier + 'x</span>';
+      actionContent = '<span class="stadium-card__payout">$' + Storage.formatMoney(stadium.gigPayout) + ' gig</span>';
     } else if (canUnlock) {
-      actionContent = '<span class="stadium-card__cost">$' + Storage.formatMoney(stadium.unlockCost) + '</span>';
+      actionContent = '<span class="stadium-card__cost">Unlock: $' + Storage.formatMoney(stadium.unlockCost) + '</span>';
     } else {
       actionContent = '<span class="stadium-card__lock">🔒</span>' +
         '<span class="stadium-card__cost">$' + Storage.formatMoney(stadium.unlockCost) + '</span>';
@@ -273,6 +273,7 @@ var UI = (function() {
       '<div class="stadium-card__info">' +
         '<h3 class="stadium-card__name">' + stadium.name + '</h3>' +
         '<p class="stadium-card__details">' + stadium.location + ' • ' + Stadiums.formatCapacity(stadium.capacity) + ' capacity</p>' +
+        (unlocked ? '<p class="stadium-card__gig-info">Promised: $' + Storage.formatMoney(stadium.gigPayout) + '</p>' : '') +
       '</div>' +
       '<div class="stadium-card__action">' + actionContent + '</div>';
     
@@ -458,10 +459,20 @@ var UI = (function() {
     document.getElementById('stat-combo').textContent = results.maxCombo;
     document.getElementById('stat-accuracy').textContent = results.accuracy + '%';
     
+    // Update performance rating and payout breakdown
+    var performanceEl = document.getElementById('results-performance');
+    if (performanceEl && results.performanceRating) {
+      var multiplierText = Math.round(results.payoutMultiplier * 100) + '%';
+      performanceEl.innerHTML = '<span class="performance-rating performance-' + results.performanceRating.toLowerCase() + '">' + 
+        results.performanceRating + ' Performance!</span>' +
+        '<span class="payout-breakdown">$' + Storage.formatMoney(results.gigPayout) + ' × ' + multiplierText + '</span>';
+      performanceEl.hidden = false;
+    }
+    
     // Update earnings
     var earningsEl = document.getElementById('results-earnings');
-    earningsEl.textContent = (results.earnings >= 0 ? '+' : '') + '$' + Storage.formatMoney(Math.abs(results.earnings));
-    earningsEl.className = 'earnings-amount ' + (results.earnings >= 0 ? 'positive' : 'negative');
+    earningsEl.textContent = '+$' + Storage.formatMoney(results.earnings);
+    earningsEl.className = 'earnings-amount positive';
     
     // Update balance
     document.getElementById('results-balance').textContent = '$' + Storage.formatMoney(Storage.getBalance());

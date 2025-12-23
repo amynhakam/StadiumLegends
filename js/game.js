@@ -241,24 +241,16 @@ var Game = (function() {
   }
 
   /**
-   * Add score and update money
+   * Add score (no money changes during gameplay)
    */
   function addScore(amount) {
-    var multiplier = gameState.stadium ? gameState.stadium.multiplier : 1;
     var comboMultiplier = getComboMultiplier();
-    var finalAmount = Math.round(amount * multiplier * comboMultiplier);
+    var finalAmount = Math.round(amount * comboMultiplier);
     
     gameState.score += Math.abs(finalAmount);
-    gameState.earnings += finalAmount;
-    
-    // Update balance
-    Storage.updateBalance(finalAmount);
     
     // Update HUD
     updateHUD();
-    
-    // Show money change
-    showMoneyChange(finalAmount);
   }
 
   /**
@@ -603,6 +595,35 @@ var Game = (function() {
     var total = gameState.perfect + gameState.good + gameState.miss;
     var accuracy = total > 0 ? Math.round(((gameState.perfect + gameState.good * 0.5) / total) * 100) : 0;
     
+    // Calculate gig payout based on accuracy tier
+    var gigPayout = gameState.stadium ? gameState.stadium.gigPayout : 1000;
+    var payoutMultiplier = 1.0;
+    var performanceRating = 'Good';
+    
+    if (accuracy === 100) {
+      // Perfect: double money (200%)
+      payoutMultiplier = 2.0;
+      performanceRating = 'Perfect';
+    } else if (accuracy >= 66) {
+      // Great: 150% of promised
+      payoutMultiplier = 1.5;
+      performanceRating = 'Great';
+    } else if (accuracy >= 34) {
+      // Good: 100% of promised
+      payoutMultiplier = 1.0;
+      performanceRating = 'Good';
+    } else {
+      // Poor: lose 50% (only get 50%)
+      payoutMultiplier = 0.5;
+      performanceRating = 'Poor';
+    }
+    
+    var finalEarnings = Math.round(gigPayout * payoutMultiplier);
+    gameState.earnings = finalEarnings;
+    
+    // Update balance with final earnings
+    Storage.updateBalance(finalEarnings);
+    
     // Save high score
     Storage.setHighScore(gameState.song.id, {
       accuracy: accuracy,
@@ -622,7 +643,10 @@ var Game = (function() {
       miss: gameState.miss,
       maxCombo: gameState.maxCombo,
       accuracy: accuracy,
-      earnings: gameState.earnings
+      earnings: gameState.earnings,
+      performanceRating: performanceRating,
+      gigPayout: gigPayout,
+      payoutMultiplier: payoutMultiplier
     });
   }
 
