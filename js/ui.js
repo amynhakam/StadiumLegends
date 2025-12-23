@@ -227,6 +227,7 @@ var UI = (function() {
   function populateStadiumList() {
     var list = document.getElementById('stadium-list');
     var preview = document.getElementById('selected-character-preview');
+    var localBarsContainer = document.getElementById('local-bars-container');
     
     if (!list) return;
     
@@ -237,7 +238,33 @@ var UI = (function() {
         '<div class="preview-info">' +
           '<div class="preview-name">' + selectedCharacter.name + '</div>' +
           '<div class="preview-instrument">' + Characters.getCurrentInstrument(selectedCharacter.id) + '</div>' +
+          '<div class="preview-hometown">📍 ' + selectedCharacter.hometown + '</div>' +
         '</div>';
+    }
+    
+    // Fetch and display local bars for the character
+    if (localBarsContainer && selectedCharacter) {
+      localBarsContainer.innerHTML = '<div class="local-bars-loading">🔍 Finding bars near ' + selectedCharacter.hometown + '...</div>';
+      
+      LocalBars.findBarsNearCharacter(selectedCharacter, function(result) {
+        if (result.success && result.bars.length > 0) {
+          var barsHtml = '<div class="local-bars-header"><span class="local-bars-icon">🍺</span> Real Bars Near ' + result.hometown + '</div>';
+          barsHtml += '<div class="local-bars-list">';
+          
+          var barsToShow = result.bars.slice(0, 5); // Show top 5
+          barsToShow.forEach(function(bar) {
+            barsHtml += '<a href="' + bar.mapUrl + '" target="_blank" class="local-bar-item">' +
+              '<span class="bar-name">' + bar.name + '</span>' +
+              '<span class="bar-distance">' + bar.distanceText + '</span>' +
+            '</a>';
+          });
+          
+          barsHtml += '</div>';
+          localBarsContainer.innerHTML = barsHtml;
+        } else {
+          localBarsContainer.innerHTML = '<div class="local-bars-empty">No bars found nearby</div>';
+        }
+      });
     }
     
     list.innerHTML = '';

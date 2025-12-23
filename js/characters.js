@@ -12,6 +12,8 @@ var Characters = (function() {
       icon: '🖤',
       instrument: 'Dark Synth',
       style: 'Dark pop, electronic, atmospheric',
+      hometown: 'Los Angeles, CA',
+      coordinates: { lat: 34.0522, lon: -118.2437 },
       colors: {
         primary: '#1a1a2e',
         accent: '#16c172',
@@ -29,6 +31,8 @@ var Characters = (function() {
       icon: '🔥',
       instrument: 'Beat Pad',
       style: 'Hip-hop, rap, conscious beats',
+      hometown: 'Atlanta, GA',
+      coordinates: { lat: 33.7490, lon: -84.3880 },
       colors: {
         primary: '#1a0a0a',
         accent: '#ef4444',
@@ -46,6 +50,8 @@ var Characters = (function() {
       icon: '🐰',
       instrument: 'Reggaeton Drums',
       style: 'Reggaeton, Latin trap, dance',
+      hometown: 'San Juan, Puerto Rico',
+      coordinates: { lat: 18.4655, lon: -66.1057 },
       colors: {
         primary: '#1a1a0a',
         accent: '#ec4899',
@@ -63,6 +69,8 @@ var Characters = (function() {
       icon: '⚡',
       instrument: 'Electric Guitar',
       style: 'Glam rock, art rock, experimental',
+      hometown: 'London, UK',
+      coordinates: { lat: 51.5074, lon: -0.1278 },
       colors: {
         primary: '#0a1a2e',
         accent: '#3b82f6',
@@ -80,6 +88,8 @@ var Characters = (function() {
       icon: '🦋',
       instrument: 'Acoustic Guitar',
       style: 'Country, folk, Americana',
+      hometown: 'Nashville, TN',
+      coordinates: { lat: 36.1627, lon: -86.7816 },
       colors: {
         primary: '#2e1a1a',
         accent: '#f472b6',
