@@ -1,5 +1,5 @@
 /* ============================================
-   Stadium Legends - Local Bars Module
+   Stadium Legends - Local Venues Module
    Uses OpenStreetMap Overpass API (free, no key)
    ============================================ */
 
@@ -7,12 +7,12 @@ var LocalBars = (function() {
   'use strict';
 
   var OVERPASS_API = 'https://overpass-api.de/api/interpreter';
-  var SEARCH_RADIUS = 5000; // 5km radius
+  var SEARCH_RADIUS = 10000; // 10km radius
 
   /**
-   * Find bars near a character's hometown
+   * Find venues near a character's hometown by type
    */
-  function findBarsNearCharacter(character, callback) {
+  function findVenuesNearCharacter(character, venueType, callback) {
     if (!character || !character.coordinates) {
       callback({ error: 'No coordinates available' });
       return;
@@ -20,15 +20,38 @@ var LocalBars = (function() {
 
     var lat = character.coordinates.lat;
     var lon = character.coordinates.lon;
+    var query;
 
-    // Overpass QL query to find bars, pubs, and music venues
-    var query = '[out:json][timeout:10];' +
-      '(' +
-      'node["amenity"="bar"](around:' + SEARCH_RADIUS + ',' + lat + ',' + lon + ');' +
-      'node["amenity"="pub"](around:' + SEARCH_RADIUS + ',' + lat + ',' + lon + ');' +
-      'node["amenity"="nightclub"](around:' + SEARCH_RADIUS + ',' + lat + ',' + lon + ');' +
-      ');' +
-      'out body 20;';
+    if (venueType === 'bar') {
+      // Bars, pubs, and small music venues
+      query = '[out:json][timeout:10];' +
+        '(' +
+        'node["amenity"="bar"](around:' + SEARCH_RADIUS + ',' + lat + ',' + lon + ');' +
+        'node["amenity"="pub"](around:' + SEARCH_RADIUS + ',' + lat + ',' + lon + ');' +
+        ');' +
+        'out body 30;';
+    } else if (venueType === 'club') {
+      // Nightclubs and music venues
+      query = '[out:json][timeout:10];' +
+        '(' +
+        'node["amenity"="nightclub"](around:' + SEARCH_RADIUS + ',' + lat + ',' + lon + ');' +
+        'node["amenity"="music_venue"](around:' + SEARCH_RADIUS + ',' + lat + ',' + lon + ');' +
+        'node["leisure"="dance"](around:' + SEARCH_RADIUS + ',' + lat + ',' + lon + ');' +
+        ');' +
+        'out body 30;';
+    } else if (venueType === 'theater') {
+      // Theaters and concert halls
+      query = '[out:json][timeout:10];' +
+        '(' +
+        'node["amenity"="theatre"](around:' + SEARCH_RADIUS + ',' + lat + ',' + lon + ');' +
+        'node["amenity"="cinema"](around:' + SEARCH_RADIUS + ',' + lat + ',' + lon + ');' +
+        'node["amenity"="concert_hall"](around:' + SEARCH_RADIUS + ',' + lat + ',' + lon + ');' +
+        ');' +
+        'out body 30;';
+    } else {
+      callback({ error: 'Unknown venue type' });
+      return;
+    }
 
     var xhr = new XMLHttpRequest();
     xhr.open('POST', OVERPASS_API, true);
@@ -39,8 +62,8 @@ var LocalBars = (function() {
         if (xhr.status === 200) {
           try {
             var data = JSON.parse(xhr.responseText);
-            var bars = parseBars(data.elements, lat, lon);
-            callback({ success: true, bars: bars, hometown: character.hometown });
+            var venues = parseVenues(data.elements, lat, lon);
+            callback({ success: true, venues: venues, hometown: character.hometown });
           } catch (e) {
             callback({ error: 'Failed to parse response' });
           }
@@ -58,18 +81,31 @@ var LocalBars = (function() {
   }
 
   /**
-   * Parse bar data from Overpass response
+   * Legacy function for backwards compatibility
    */
-  function parseBars(elements, centerLat, centerLon) {
-    var bars = [];
+  function findBarsNearCharacter(character, callback) {
+    findVenuesNearCharacter(character, 'bar', function(result) {
+      if (result.success) {
+        callback({ success: true, bars: result.venues, hometown: result.hometown });
+      } else {
+        callback(result);
+      }
+    });
+  }
+
+  /**
+   * Parse venue data from Overpass response
+   */
+  function parseVenues(elements, centerLat, centerLon) {
+    var venues = [];
 
     for (var i = 0; i < elements.length; i++) {
       var el = elements[i];
       if (el.tags && el.tags.name) {
         var distance = calculateDistance(centerLat, centerLon, el.lat, el.lon);
-        bars.push({
+        venues.push({
           name: el.tags.name,
-          type: el.tags.amenity || 'bar',
+          type: el.tags.amenity || el.tags.leisure || 'venue',
           lat: el.lat,
           lon: el.lon,
           distance: distance,
@@ -82,11 +118,11 @@ var LocalBars = (function() {
     }
 
     // Sort by distance
-    bars.sort(function(a, b) {
+    venues.sort(function(a, b) {
       return a.distance - b.distance;
     });
 
-    return bars;
+    return venues;
   }
 
   /**
@@ -119,6 +155,7 @@ var LocalBars = (function() {
 
   // Public API
   return {
-    findBarsNearCharacter: findBarsNearCharacter
+    findBarsNearCharacter: findBarsNearCharacter,
+    findVenuesNearCharacter: findVenuesNearCharacter
   };
 })();

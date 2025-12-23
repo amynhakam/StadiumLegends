@@ -249,20 +249,41 @@ var UI = (function() {
       list.appendChild(card);
     });
     
-    // Fetch local bars and pick a random one for the Local Bar venue
+    // Fetch real venues for each venue type
     if (selectedCharacter) {
-      LocalBars.findBarsNearCharacter(selectedCharacter, function(result) {
-        if (result.success && result.bars.length > 0) {
-          var randomBar = result.bars[Math.floor(Math.random() * result.bars.length)];
-          var barNameEl = document.getElementById('local-bar-name');
-          var barLocationEl = document.getElementById('local-bar-location');
+      // Fetch bars for Local Bar venue
+      LocalBars.findVenuesNearCharacter(selectedCharacter, 'bar', function(result) {
+        if (result.success && result.venues.length > 0) {
+          var randomVenue = result.venues[Math.floor(Math.random() * result.venues.length)];
+          var nameEl = document.getElementById('local-bar-name');
+          var locationEl = document.getElementById('local-bar-location');
           
-          if (barNameEl) {
-            barNameEl.textContent = randomBar.name;
-          }
-          if (barLocationEl) {
-            barLocationEl.textContent = randomBar.distanceText + ' away • ' + selectedCharacter.hometown;
-          }
+          if (nameEl) nameEl.textContent = randomVenue.name;
+          if (locationEl) locationEl.textContent = randomVenue.distanceText + ' away • ' + selectedCharacter.hometown;
+        }
+      });
+      
+      // Fetch clubs for Club Venue
+      LocalBars.findVenuesNearCharacter(selectedCharacter, 'club', function(result) {
+        if (result.success && result.venues.length > 0) {
+          var randomVenue = result.venues[Math.floor(Math.random() * result.venues.length)];
+          var nameEl = document.getElementById('club-venue-name');
+          var locationEl = document.getElementById('club-venue-location');
+          
+          if (nameEl) nameEl.textContent = randomVenue.name;
+          if (locationEl) locationEl.textContent = randomVenue.distanceText + ' away • ' + selectedCharacter.hometown;
+        }
+      });
+      
+      // Fetch theaters for Grand Theater
+      LocalBars.findVenuesNearCharacter(selectedCharacter, 'theater', function(result) {
+        if (result.success && result.venues.length > 0) {
+          var randomVenue = result.venues[Math.floor(Math.random() * result.venues.length)];
+          var nameEl = document.getElementById('theater-venue-name');
+          var locationEl = document.getElementById('theater-venue-location');
+          
+          if (nameEl) nameEl.textContent = randomVenue.name;
+          if (locationEl) locationEl.textContent = randomVenue.distanceText + ' away • ' + selectedCharacter.hometown;
         }
       });
     }
@@ -287,7 +308,7 @@ var UI = (function() {
         '<span class="stadium-card__cost">$' + Storage.formatMoney(stadium.unlockCost) + '</span>';
     }
     
-    // Special handling for Local Bar - show cycling real bar names
+    // Special handling for venues with real location lookups
     var displayName = stadium.name;
     var displayLocation = stadium.location + ' • ' + Stadiums.formatCapacity(stadium.capacity) + ' capacity';
     
@@ -297,6 +318,24 @@ var UI = (function() {
         '<div class="stadium-card__info">' +
           '<h3 class="stadium-card__name" id="local-bar-name">Finding local bar...</h3>' +
           '<p class="stadium-card__details" id="local-bar-location">Searching near hometown...</p>' +
+          (unlocked ? '<p class="stadium-card__gig-info">Promised: $' + Storage.formatMoney(stadium.gigPayout) + '</p>' : '') +
+        '</div>' +
+        '<div class="stadium-card__action">' + actionContent + '</div>';
+    } else if (stadium.id === 'club-venue') {
+      card.innerHTML = 
+        '<div class="stadium-card__icon">' + stadium.icon + '</div>' +
+        '<div class="stadium-card__info">' +
+          '<h3 class="stadium-card__name" id="club-venue-name">Finding local club...</h3>' +
+          '<p class="stadium-card__details" id="club-venue-location">Searching near hometown...</p>' +
+          (unlocked ? '<p class="stadium-card__gig-info">Promised: $' + Storage.formatMoney(stadium.gigPayout) + '</p>' : '') +
+        '</div>' +
+        '<div class="stadium-card__action">' + actionContent + '</div>';
+    } else if (stadium.id === 'theater') {
+      card.innerHTML = 
+        '<div class="stadium-card__icon">' + stadium.icon + '</div>' +
+        '<div class="stadium-card__info">' +
+          '<h3 class="stadium-card__name" id="theater-venue-name">Finding local theater...</h3>' +
+          '<p class="stadium-card__details" id="theater-venue-location">Searching near hometown...</p>' +
           (unlocked ? '<p class="stadium-card__gig-info">Promised: $' + Storage.formatMoney(stadium.gigPayout) + '</p>' : '') +
         '</div>' +
         '<div class="stadium-card__action">' + actionContent + '</div>';
