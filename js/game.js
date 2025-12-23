@@ -125,29 +125,6 @@ var Game = (function() {
             elements.hitTargets[lane].classList.remove('active');
           }
         });
-        
-        // Mouse click support for desktop
-        btn.addEventListener('mousedown', function(e) {
-          e.preventDefault();
-          if (!gameState.playing || gameState.paused) return;
-          
-          var lane = parseInt(this.getAttribute('data-lane'));
-          this.classList.add('pressed');
-          handleInput(lane);
-        });
-        
-        btn.addEventListener('mouseup', function(e) {
-          e.preventDefault();
-          this.classList.remove('pressed');
-          var lane = parseInt(this.getAttribute('data-lane'));
-          if (elements.hitTargets[lane]) {
-            elements.hitTargets[lane].classList.remove('active');
-          }
-        });
-        
-        btn.addEventListener('mouseleave', function(e) {
-          this.classList.remove('pressed');
-        });
       });
     }
   }
@@ -398,9 +375,8 @@ var Game = (function() {
       var bufferHeight = timingGood * 2 * pixelsPerMs;
       
       // Position relative to hit zone (which is at the bottom)
-      // Both lines positioned above the hit zone buttons
-      var topOffset = -bufferHeight - 70; // EARLY line well above
-      var bottomOffset = -70; // LATE line just above buttons
+      var topOffset = -bufferHeight / 2 - 30; // 30px above center
+      var bottomOffset = bufferHeight / 2 - 30; // Below center
       
       bufferTop.style.top = topOffset + 'px';
       bufferBottom.style.top = bottomOffset + 'px';
