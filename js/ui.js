@@ -227,7 +227,6 @@ var UI = (function() {
   function populateStadiumList() {
     var list = document.getElementById('stadium-list');
     var preview = document.getElementById('selected-character-preview');
-    var localBarsContainer = document.getElementById('local-bars-container');
     
     if (!list) return;
     
@@ -242,31 +241,6 @@ var UI = (function() {
         '</div>';
     }
     
-    // Fetch and display local bars for the character
-    if (localBarsContainer && selectedCharacter) {
-      localBarsContainer.innerHTML = '<div class="local-bars-loading">🔍 Finding bars near ' + selectedCharacter.hometown + '...</div>';
-      
-      LocalBars.findBarsNearCharacter(selectedCharacter, function(result) {
-        if (result.success && result.bars.length > 0) {
-          var barsHtml = '<div class="local-bars-header"><span class="local-bars-icon">🍺</span> Real Bars Near ' + result.hometown + '</div>';
-          barsHtml += '<div class="local-bars-list">';
-          
-          var barsToShow = result.bars.slice(0, 5); // Show top 5
-          barsToShow.forEach(function(bar) {
-            barsHtml += '<a href="' + bar.mapUrl + '" target="_blank" class="local-bar-item">' +
-              '<span class="bar-name">' + bar.name + '</span>' +
-              '<span class="bar-distance">' + bar.distanceText + '</span>' +
-            '</a>';
-          });
-          
-          barsHtml += '</div>';
-          localBarsContainer.innerHTML = barsHtml;
-        } else {
-          localBarsContainer.innerHTML = '<div class="local-bars-empty">No bars found nearby</div>';
-        }
-      });
-    }
-    
     list.innerHTML = '';
     
     var stadiums = Stadiums.getAvailable();
@@ -274,6 +248,24 @@ var UI = (function() {
       var card = createStadiumCard(item.stadium, item.unlocked, item.canUnlock);
       list.appendChild(card);
     });
+    
+    // Fetch local bars and pick a random one for the Local Bar venue
+    if (selectedCharacter) {
+      LocalBars.findBarsNearCharacter(selectedCharacter, function(result) {
+        if (result.success && result.bars.length > 0) {
+          var randomBar = result.bars[Math.floor(Math.random() * result.bars.length)];
+          var barNameEl = document.getElementById('local-bar-name');
+          var barLocationEl = document.getElementById('local-bar-location');
+          
+          if (barNameEl) {
+            barNameEl.textContent = randomBar.name;
+          }
+          if (barLocationEl) {
+            barLocationEl.textContent = randomBar.distanceText + ' away • ' + selectedCharacter.hometown;
+          }
+        }
+      });
+    }
   }
 
   /**
@@ -295,14 +287,29 @@ var UI = (function() {
         '<span class="stadium-card__cost">$' + Storage.formatMoney(stadium.unlockCost) + '</span>';
     }
     
-    card.innerHTML = 
-      '<div class="stadium-card__icon">' + stadium.icon + '</div>' +
-      '<div class="stadium-card__info">' +
-        '<h3 class="stadium-card__name">' + stadium.name + '</h3>' +
-        '<p class="stadium-card__details">' + stadium.location + ' • ' + Stadiums.formatCapacity(stadium.capacity) + ' capacity</p>' +
-        (unlocked ? '<p class="stadium-card__gig-info">Promised: $' + Storage.formatMoney(stadium.gigPayout) + '</p>' : '') +
-      '</div>' +
-      '<div class="stadium-card__action">' + actionContent + '</div>';
+    // Special handling for Local Bar - show cycling real bar names
+    var displayName = stadium.name;
+    var displayLocation = stadium.location + ' • ' + Stadiums.formatCapacity(stadium.capacity) + ' capacity';
+    
+    if (stadium.id === 'local-bar') {
+      card.innerHTML = 
+        '<div class="stadium-card__icon">' + stadium.icon + '</div>' +
+        '<div class="stadium-card__info">' +
+          '<h3 class="stadium-card__name" id="local-bar-name">Finding local bar...</h3>' +
+          '<p class="stadium-card__details" id="local-bar-location">Searching near hometown...</p>' +
+          (unlocked ? '<p class="stadium-card__gig-info">Promised: $' + Storage.formatMoney(stadium.gigPayout) + '</p>' : '') +
+        '</div>' +
+        '<div class="stadium-card__action">' + actionContent + '</div>';
+    } else {
+      card.innerHTML = 
+        '<div class="stadium-card__icon">' + stadium.icon + '</div>' +
+        '<div class="stadium-card__info">' +
+          '<h3 class="stadium-card__name">' + displayName + '</h3>' +
+          '<p class="stadium-card__details">' + displayLocation + '</p>' +
+          (unlocked ? '<p class="stadium-card__gig-info">Promised: $' + Storage.formatMoney(stadium.gigPayout) + '</p>' : '') +
+        '</div>' +
+        '<div class="stadium-card__action">' + actionContent + '</div>';
+    }
     
     card.addEventListener('click', function() {
       Audio.playClick();
