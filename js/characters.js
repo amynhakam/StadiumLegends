@@ -12,8 +12,8 @@ var Characters = (function() {
       icon: '🖤',
       instrument: 'Dark Synth',
       style: 'Dark pop, electronic, atmospheric',
-      hometown: 'Los Angeles, CA',
-      coordinates: { lat: 34.0522, lon: -118.2437 },
+      hometown: 'Seattle, WA',
+      coordinates: { lat: 47.6062, lon: -122.3321 },
       colors: {
         primary: '#1a1a2e',
         accent: '#16c172',
