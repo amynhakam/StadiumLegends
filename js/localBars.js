@@ -48,6 +48,19 @@ var LocalBars = (function() {
         'node["amenity"="concert_hall"](around:' + SEARCH_RADIUS + ',' + lat + ',' + lon + ');' +
         ');' +
         'out body 30;';
+    } else if (venueType === 'arena') {
+      // Major sports stadiums - search globally with larger radius
+      var arenaRadius = 50000; // 50km radius for arenas
+      query = '[out:json][timeout:15];' +
+        '(' +
+        'node["leisure"="stadium"](around:' + arenaRadius + ',' + lat + ',' + lon + ');' +
+        'way["leisure"="stadium"](around:' + arenaRadius + ',' + lat + ',' + lon + ');' +
+        'node["building"="stadium"](around:' + arenaRadius + ',' + lat + ',' + lon + ');' +
+        'way["building"="stadium"](around:' + arenaRadius + ',' + lat + ',' + lon + ');' +
+        'node["amenity"="stadium"](around:' + arenaRadius + ',' + lat + ',' + lon + ');' +
+        'way["amenity"="stadium"](around:' + arenaRadius + ',' + lat + ',' + lon + ');' +
+        ');' +
+        'out center body 50;';
     } else {
       callback({ error: 'Unknown venue type' });
       return;
@@ -102,17 +115,22 @@ var LocalBars = (function() {
     for (var i = 0; i < elements.length; i++) {
       var el = elements[i];
       if (el.tags && el.tags.name) {
-        var distance = calculateDistance(centerLat, centerLon, el.lat, el.lon);
+        // For ways (polygons), use center coordinates
+        var elLat = el.lat || (el.center ? el.center.lat : null);
+        var elLon = el.lon || (el.center ? el.center.lon : null);
+        if (!elLat || !elLon) continue;
+        
+        var distance = calculateDistance(centerLat, centerLon, elLat, elLon);
         venues.push({
           name: el.tags.name,
-          type: el.tags.amenity || el.tags.leisure || 'venue',
-          lat: el.lat,
-          lon: el.lon,
+          type: el.tags.amenity || el.tags.leisure || el.tags.building || 'venue',
+          lat: elLat,
+          lon: elLon,
           distance: distance,
           distanceText: formatDistance(distance),
           address: el.tags['addr:street'] || '',
           openingHours: el.tags.opening_hours || '',
-          mapUrl: 'https://www.openstreetmap.org/?mlat=' + el.lat + '&mlon=' + el.lon + '#map=17/' + el.lat + '/' + el.lon
+          mapUrl: 'https://www.openstreetmap.org/?mlat=' + elLat + '&mlon=' + elLon + '#map=17/' + elLat + '/' + elLon
         });
       }
     }

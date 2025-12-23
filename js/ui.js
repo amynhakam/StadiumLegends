@@ -286,6 +286,18 @@ var UI = (function() {
           if (locationEl) locationEl.textContent = randomVenue.distanceText + ' away • ' + selectedCharacter.hometown;
         }
       });
+      
+      // Fetch arenas/stadiums for Metro Arena
+      LocalBars.findVenuesNearCharacter(selectedCharacter, 'arena', function(result) {
+        if (result.success && result.venues.length > 0) {
+          var randomVenue = result.venues[Math.floor(Math.random() * result.venues.length)];
+          var nameEl = document.getElementById('arena-venue-name');
+          var locationEl = document.getElementById('arena-venue-location');
+          
+          if (nameEl) nameEl.textContent = randomVenue.name;
+          if (locationEl) locationEl.textContent = randomVenue.distanceText + ' away • ' + selectedCharacter.hometown;
+        }
+      });
     }
   }
 
@@ -336,6 +348,15 @@ var UI = (function() {
         '<div class="stadium-card__info">' +
           '<h3 class="stadium-card__name" id="theater-venue-name">Finding local theater...</h3>' +
           '<p class="stadium-card__details" id="theater-venue-location">Searching near hometown...</p>' +
+          (unlocked ? '<p class="stadium-card__gig-info">Promised: $' + Storage.formatMoney(stadium.gigPayout) + '</p>' : '') +
+        '</div>' +
+        '<div class="stadium-card__action">' + actionContent + '</div>';
+    } else if (stadium.id === 'arena') {
+      card.innerHTML = 
+        '<div class="stadium-card__icon">' + stadium.icon + '</div>' +
+        '<div class="stadium-card__info">' +
+          '<h3 class="stadium-card__name" id="arena-venue-name">Finding major stadium...</h3>' +
+          '<p class="stadium-card__details" id="arena-venue-location">Searching for arenas...</p>' +
           (unlocked ? '<p class="stadium-card__gig-info">Promised: $' + Storage.formatMoney(stadium.gigPayout) + '</p>' : '') +
         '</div>' +
         '<div class="stadium-card__action">' + actionContent + '</div>';
