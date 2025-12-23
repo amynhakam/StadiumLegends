@@ -340,15 +340,16 @@
 }
 
 /* ============================================
-   Touch Controls (Mobile)
+   Touch Controls (Desktop & Mobile)
    ============================================ */
 .touch-controls {
-  display: none;
+  display: flex;
   justify-content: center;
   gap: 4px;
   padding: var(--spacing-md) var(--spacing-lg);
   background-color: var(--bg-secondary);
   border-top: 2px solid var(--bg-tertiary);
+  cursor: pointer;
 }
 
 .touch-btn {
