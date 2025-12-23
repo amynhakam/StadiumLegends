@@ -105,7 +105,7 @@ var Game = (function() {
       }
     });
 
-    // Touch input
+    // Touch input for mobile touch buttons
     if (elements.touchButtons) {
       elements.touchButtons.forEach(function(btn) {
         btn.addEventListener('touchstart', function(e) {
@@ -120,6 +120,52 @@ var Game = (function() {
         btn.addEventListener('touchend', function(e) {
           e.preventDefault();
           this.classList.remove('pressed');
+          var lane = parseInt(this.getAttribute('data-lane'));
+          if (elements.hitTargets[lane]) {
+            elements.hitTargets[lane].classList.remove('active');
+          }
+        });
+      });
+    }
+
+    // Click and touch input for hit target buttons (1, 2, 3, 4)
+    if (elements.hitTargets) {
+      elements.hitTargets.forEach(function(btn) {
+        // Mouse click support for desktop
+        btn.addEventListener('mousedown', function(e) {
+          e.preventDefault();
+          if (!gameState.playing || gameState.paused) return;
+          
+          var lane = parseInt(this.getAttribute('data-lane'));
+          handleInput(lane);
+        });
+        
+        btn.addEventListener('mouseup', function(e) {
+          e.preventDefault();
+          var lane = parseInt(this.getAttribute('data-lane'));
+          if (elements.hitTargets[lane]) {
+            elements.hitTargets[lane].classList.remove('active');
+          }
+        });
+        
+        btn.addEventListener('mouseleave', function(e) {
+          var lane = parseInt(this.getAttribute('data-lane'));
+          if (elements.hitTargets[lane]) {
+            elements.hitTargets[lane].classList.remove('active');
+          }
+        });
+
+        // Touch support for touch screens (Surface, etc.)
+        btn.addEventListener('touchstart', function(e) {
+          e.preventDefault();
+          if (!gameState.playing || gameState.paused) return;
+          
+          var lane = parseInt(this.getAttribute('data-lane'));
+          handleInput(lane);
+        });
+        
+        btn.addEventListener('touchend', function(e) {
+          e.preventDefault();
           var lane = parseInt(this.getAttribute('data-lane'));
           if (elements.hitTargets[lane]) {
             elements.hitTargets[lane].classList.remove('active');
@@ -371,12 +417,16 @@ var Game = (function() {
       // Calculate pixel positions based on timing windows
       var travelTime = 2000; // ms for note to travel
       var timingGood = Config.TIMING_GOOD * (1 + gameState.timingBonus);
-      var pixelsPerMs = highwayHeight / travelTime;
-      var bufferHeight = timingGood * 2 * pixelsPerMs;
+      var pixelsPerMs = hitZoneY / travelTime;
       
-      // Position both buffer lines above the hit buttons
-      var topOffset = -bufferHeight - 70; // EARLY line
-      var bottomOffset = -70; // LATE line just above buttons
+      // EARLY line: when note first becomes hittable (timingGood ms before target)
+      // LATE line: last moment to hit (timingGood ms after target, but above buttons)
+      var earlyOffset = timingGood * pixelsPerMs; // How far above hitZone the early line is
+      var lateOffset = 0; // At the hit zone itself (edge of buttons)
+      
+      // Position relative to hit-zone-container (which is at hitZoneY)
+      var topOffset = -earlyOffset - 5; // EARLY line
+      var bottomOffset = -lateOffset - 5; // LATE line just above buttons
       
       bufferTop.style.top = topOffset + 'px';
       bufferBottom.style.top = bottomOffset + 'px';

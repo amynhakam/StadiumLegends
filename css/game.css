@@ -295,6 +295,9 @@
   font-weight: 700;
   color: var(--text-muted);
   transition: all var(--transition-fast);
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .hit-target[data-lane="0"] { --lane-color: var(--lane-1); }
